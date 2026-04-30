@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mazda Accessory Protection Menu</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #1a1a18; padding: 2rem 1rem; }
+  .menu-wrap { max-width: 780px; margin: 0 auto; }
+  .header-card, .totals-card, .sig-card { background: #fff; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap; }
+  .dealership-name { font-size: 20px; font-weight: 500; color: #1a1a18; outline: none; min-width: 120px; }
+  .dealership-name:focus { border-bottom: 1px solid #910a2d; }
+  .tag { font-size: 11px; font-weight: 500; background: #fce8ec; color: #910a2d; padding: 3px 10px; border-radius: 8px; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+  .deal-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+  .field-label { font-size: 11px; color: #888780; text-transform: uppercase; letter-spacing: 0.05em; }
+  .field-group input, .field-group select { font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.2); background: #f5f5f3; color: #1a1a18; width: 100%; }
+  .field-group input:focus, .field-group select:focus { outline: none; border-color: #910a2d; }
+  .section-label { font-size: 11px; font-weight: 500; color: #888780; text-transform: uppercase; letter-spacing: 0.07em; margin: 0 0 8px; }
+  .vehicle-select-wrap { margin-bottom: 1rem; }
+  .vehicle-select-wrap select { font-size: 15px; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #910a2d; background: #fff; color: #1a1a18; width: 100%; cursor: pointer; font-weight: 500; }
+  .vehicle-select-wrap select:focus { outline: none; box-shadow: 0 0 0 3px rgba(145,10,45,0.12); }
+  .products-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+  .product-row { background: #fff; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.15s; }
+  .product-row:hover { border-color: rgba(0,0,0,0.25); }
+  .product-row.selected { border: 1.5px solid #910a2d; background: #fdf2f4; }
+  .other-row { background: #fff; border: 0.5px dashed rgba(0,0,0,0.2); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color 0.15s; }
+  .other-row:hover { border-color: rgba(0,0,0,0.35); }
+  .other-row.selected { border: 1.5px solid #910a2d; background: #fdf2f4; }
+  .check-box { width: 20px; height: 20px; border-radius: 6px; border: 0.5px solid rgba(0,0,0,0.2); background: #f5f5f3; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .product-row.selected .check-box, .other-row.selected .check-box { background: #910a2d; border-color: #910a2d; }
+  .check-mark { display: none; color: white; font-size: 13px; font-weight: 600; }
+  .product-row.selected .check-mark, .other-row.selected .check-mark { display: block; }
+  .product-info { flex: 1; }
+  .product-name { font-size: 15px; font-weight: 500; color: #1a1a18; margin-bottom: 2px; }
+  .product-desc { font-size: 13px; color: #5f5e5a; line-height: 1.4; }
+  .other-name-input { font-size: 15px; font-weight: 500; background: transparent; border: none; border-bottom: 0.5px solid rgba(0,0,0,0.15); color: #1a1a18; width: 100%; padding: 2px 0; }
+  .other-name-input:focus { outline: none; border-bottom-color: #910a2d; }
+  .other-desc-input { font-size: 13px; background: transparent; border: none; border-bottom: 0.5px solid rgba(0,0,0,0.1); color: #5f5e5a; width: 100%; padding: 2px 0; margin-top: 6px; }
+  .other-desc-input:focus { outline: none; border-bottom-color: #910a2d; }
+  .product-pricing { text-align: right; flex-shrink: 0; }
+  .price-input-wrap { display: flex; align-items: center; gap: 4px; justify-content: flex-end; margin-bottom: 3px; }
+  .price-symbol { font-size: 13px; color: #888780; }
+  .price-input { font-size: 16px; font-weight: 500; color: #1a1a18; background: transparent; border: none; border-bottom: 0.5px solid rgba(0,0,0,0.15); text-align: right; width: 72px; padding: 2px 0; }
+  .price-input:focus { outline: none; border-bottom-color: #910a2d; }
+  .price-note { font-size: 12px; color: #888780; }
+  .cash-toggle-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.15); background: #f5f5f3; margin-bottom: 12px; cursor: pointer; user-select: none; }
+  .cash-toggle-row.active { border: 1.5px solid #1d9e75; background: #e1f5ee; }
+  .toggle-box { width: 20px; height: 20px; border-radius: 6px; border: 0.5px solid rgba(0,0,0,0.2); background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .cash-toggle-row.active .toggle-box { background: #1d9e75; border-color: #1d9e75; }
+  .toggle-check { display: none; color: white; font-size: 13px; font-weight: 600; }
+  .cash-toggle-row.active .toggle-check { display: block; }
+  .toggle-label { font-size: 14px; font-weight: 500; color: #1a1a18; }
+  .toggle-sub { font-size: 12px; color: #888780; margin-left: auto; }
+  .controls-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .ctrl-label { font-size: 13px; color: #5f5e5a; }
+  .ctrl-select, .ctrl-input { font-size: 14px; padding: 5px 8px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.2); background: #f5f5f3; color: #1a1a18; }
+  .ctrl-input { width: 80px; }
+  .totals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
+  .stat-card { background: #f5f5f3; border-radius: 8px; padding: 12px 14px; }
+  .stat-label { font-size: 11px; color: #888780; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-value { font-size: 20px; font-weight: 500; color: #1a1a18; }
+  .stat-sub { font-size: 12px; color: #888780; margin-top: 2px; }
+  .tax-row { display: flex; justify-content: space-between; font-size: 13px; color: #5f5e5a; padding: 4px 0; }
+  .tax-total-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 500; color: #1a1a18; padding: 8px 0 4px; border-top: 0.5px solid rgba(0,0,0,0.1); margin-top: 4px; }
+  .selected-list { font-size: 13px; color: #5f5e5a; min-height: 18px; margin-top: 4px; }
+  .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+  .sig-pad-wrap { display: flex; flex-direction: column; gap: 6px; }
+  .sig-pad-label { font-size: 11px; color: #888780; text-transform: uppercase; letter-spacing: 0.05em; }
+  .sig-canvas-container { position: relative; border: 0.5px solid rgba(0,0,0,0.18); border-radius: 8px; background: #fafaf9; overflow: hidden; }
+  .sig-canvas { display: block; width: 100%; height: 90px; cursor: crosshair; touch-action: none; }
+  .sig-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 12px; color: #bbb; pointer-events: none; white-space: nowrap; }
+  .sig-clear-btn { font-size: 11px; color: #888780; background: none; border: none; cursor: pointer; text-align: right; padding: 0; text-decoration: underline; align-self: flex-end; }
+  .sig-clear-btn:hover { color: #1a1a18; }
+  .ack-text { font-size: 13px; color: #5f5e5a; margin-top: 8px; line-height: 1.6; }
+  .disclaimer { font-size: 11px; color: #888780; line-height: 1.6; margin-top: 1rem; border-top: 0.5px solid rgba(0,0,0,0.1); padding-top: 1rem; }
+  .btn-row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .btn { font-size: 13px; padding: 8px 18px; border-radius: 8px; border: 0.5px solid rgba(0,0,0,0.2); background: transparent; color: #1a1a18; cursor: pointer; }
+  .btn:hover { background: #f5f5f3; }
+  .btn.primary { background: #910a2d; color: #fff; border-color: #910a2d; }
+  .btn.primary:hover { opacity: 0.85; }
+  .product-count-badge { font-size: 12px; color: #910a2d; font-weight: 500; margin-bottom: 6px; }
+  @media (max-width: 520px) {
+    .totals-grid { grid-template-columns: 1fr 1fr; }
+    .sig-row { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { background: #fff; padding: 0.5rem; }
+    .btn-row, .no-print { display: none !important; }
+    .sig-clear-btn { display: none !important; }
+    .product-row, .other-row { page-break-inside: avoid; }
+    .sig-canvas-container { border: 0.5px solid #ccc; background: #fff; }
+  }
+</style>
+</head>
+<body>
+<div class="menu-wrap">
+
+  <div class="header-card">
+    <div class="header-top">
+      <div>
+        <div class="dealership-name" contenteditable="true">Your Dealership Name</div>
+        <div style="font-size:12px;color:#888780;margin-top:3px;">Mazda Accessories Protection Menu</div>
+      </div>
+      <div class="tag">Accessory Menu</div>
+    </div>
+    <div class="deal-fields">
+      <div class="field-group"><div class="field-label">Customer Name</div><input type="text" placeholder="Full name"></div>
+      <div class="field-group"><div class="field-label">Vehicle</div><input type="text" placeholder="Year / Make / Model" id="f-vehicle"></div>
+      <div class="field-group"><div class="field-label">Stock #</div><input type="text" placeholder="Stock number"></div>
+      <div class="field-group"><div class="field-label">Date</div><input type="date" id="f-date"></div>
+    </div>
+  </div>
+
+  <div class="section-label">Select Vehicle Model</div>
+  <div class="vehicle-select-wrap">
+    <select id="vehicle-select">
+      <option value="">— Choose a Mazda model —</option>
+    </select>
+  </div>
+
+  <div class="product-count-badge" id="product-count-badge"></div>
+  <div class="section-label">Select protection packages</div>
+  <div class="products-grid" id="products-grid"></div>
+
+  <div class="totals-card">
+    <div class="section-label" style="margin-bottom:10px;">Deal summary</div>
+    <div class="cash-toggle-row no-print" id="cash-toggle">
+      <div class="toggle-box"><div class="toggle-check">&#10003;</div></div>
+      <div class="toggle-label">Cash / No financing</div>
+      <div class="toggle-sub" id="cash-sub">Toggle to hide monthly payment</div>
+    </div>
+    <div class="controls-row no-print" id="finance-controls">
+      <span class="ctrl-label">Finance term:</span>
+      <select class="ctrl-select" id="term-select">
+        <option value="48">48 months</option>
+        <option value="60" selected>60 months</option>
+        <option value="72">72 months</option>
+        <option value="84">84 months</option>
+      </select>
+      <span class="ctrl-label">Rate (%):</span>
+      <input type="number" class="ctrl-input" id="rate-input" value="6.9" step="0.1" min="0" max="30">
+    </div>
+    <div class="totals-grid">
+      <div class="stat-card">
+        <div class="stat-label">Items selected</div>
+        <div class="stat-value" id="item-count">0</div>
+        <div class="stat-sub" id="item-total-sub">of 0 products</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Subtotal</div>
+        <div class="stat-value" id="total-price">$0</div>
+        <div class="stat-sub">before tax</div>
+      </div>
+      <div class="stat-card" id="monthly-card">
+        <div class="stat-label">Monthly bump</div>
+        <div class="stat-value" id="monthly-bump">$0/mo</div>
+        <div class="stat-sub" id="term-display">over 60 months</div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div class="tax-row"><span>Subtotal</span><span id="subtotal-line">$0.00</span></div>
+      <div class="tax-row"><span>Sales tax (7.5%)</span><span id="tax-line">$0.00</span></div>
+      <div class="tax-total-row"><span>Total with tax</span><span id="total-with-tax">$0.00</span></div>
+    </div>
+    <div class="section-label">Selected items</div>
+    <div class="selected-list" id="selected-list">No items selected</div>
+  </div>
+
+  <div class="sig-card">
+    <div class="section-label">Customer acknowledgment</div>
+    <p class="ack-text">I have been offered the above accessory protection products by the dealership. The items checked above have been selected and agreed to at the prices listed. I understand these are optional products and my decision is reflected below.</p>
+    <div class="sig-row">
+      <div class="sig-pad-wrap">
+        <div class="sig-pad-label">Customer signature</div>
+        <div class="sig-canvas-container">
+          <canvas class="sig-canvas" id="sig-customer"></canvas>
+          <div class="sig-placeholder" id="ph-customer">Sign here</div>
+        </div>
+        <button class="sig-clear-btn" onclick="clearSig('sig-customer','ph-customer')">Clear</button>
+      </div>
+      <div class="sig-pad-wrap">
+        <div class="sig-pad-label">Sales associate</div>
+        <div class="sig-canvas-container">
+          <canvas class="sig-canvas" id="sig-associate"></canvas>
+          <div class="sig-placeholder" id="ph-associate">Sign here</div>
+        </div>
+        <button class="sig-clear-btn" onclick="clearSig('sig-associate','ph-associate')">Clear</button>
+      </div>
+    </div>
+    <div class="disclaimer">All prices shown are pre-tax. A 7.5% sales tax is applied and reflected in the total. Monthly payment figures are estimates based on the finance term and rate shown above and are for reference only. Final payment amounts will be reflected in your financing contract. Genuine Mazda Accessories are backed by Mazda's warranty. Products and prices subject to change. See dealer for complete details.</div>
+  </div>
+
+  <div class="btn-row no-print">
+    <button class="btn" onclick="clearAll()">Clear all</button>
+    <button class="btn primary" onclick="window.print()">Print menu</button>
+  </div>
+
+</div>
+<script>
+const TAX = 0.075;
+
+// ══════════════════════════════════════════════════════════════
+// COMPLETE MAZDA ACCESSORY DATABASE — ALL 2026 MODELS
+// Sourced from mazdausa.com/vehicles/[model]/accessories
+// Prices are dealer-adjustable in the menu
+// ══════════════════════════════════════════════════════════════
+
+const vehicleAccessories = {
+
+  "2026 Mazda CX-90": [
+    { id:'awfm90', name:'All-Weather Floor Mats', desc:'Custom-fitted mats that guard against snow, mud, sand and whatever else comes through the door. Set of 4.', price:175 },
+    { id:'cmat90', name:'Carpet Floor Mats', desc:'Premium carpet mats with contrast stitching and integrated heel pad. Set of 4.', price:145 },
+    { id:'ctray90', name:'Cargo Tray', desc:'Flexible, durable cargo tray with grooves to divert and catch messy liquids. Easy to remove and clean.', price:120 },
+    { id:'cnet90', name:'Cargo Net', desc:'Keeps equipment and personal items secure in the cargo area during transit.', price:55 },
+    { id:'ccover90', name:'Retractable Cargo Cover', desc:'Protects your valuables, keeps gear cool and is easy to install and remove.', price:350 },
+    { id:'xbar90', name:'Crossbars', desc:'Easy to install and remove with enhanced locking mechanism. Compatible with all roof attachments.', price:450 },
+    { id:'rbasket90', name:'Roof Basket', desc:'Expandable netting keeps bulky items and luggage safe and secure on the roof. Requires crossbars.', price:550 },
+    { id:'rbike90', name:'Bike Carrier', desc:'Ratcheting cradle strap for quick attachment. Fold-down arms when not in use. 2- or 4-bike style.', price:300 },
+    { id:'rski90', name:'Ski / Snowboard Carrier', desc:'Securely carries skis and snowboards on your roof rack. Fits various sizes.', price:325 },
+    { id:'rcargo90', name:'Roof Cargo Box', desc:'Low-profile carrier blends seamlessly with CX-90 and provides effortless loading.', price:650 },
+    { id:'tow90', name:'Tow Hitch', desc:'2-inch receiver with up to 5,000 lbs towing capacity. Hitch plug included.', price:575 },
+    { id:'towbrk90', name:'Tow Brake Controller', desc:'Integrated brake controller designed for your CX-90 towing setup.', price:350 },
+    { id:'towball90', name:'Tow Ball Mount', desc:'Genuine Mazda tow ball mount sized for the CX-90 hitch receiver.', price:75 },
+    { id:'towhar90', name:'Tow Hitch Harness', desc:'4-pin wiring harness for trailer lighting. Custom fit for CX-90.', price:110 },
+    { id:'splash90f', name:'Splash Guards – Front', desc:'Protect your finish from rocks and road debris. Set of 2.', price:110 },
+    { id:'splash90r', name:'Splash Guards – Rear', desc:'Protect your finish from rocks and road debris. Set of 2.', price:100 },
+    { id:'bguard90', name:'Rear Bumper Guard', desc:'Stainless steel bumper guard protects from chips and scratches during loading/unloading.', price:150 },
+    { id:'dsill90', name:'Illuminated Door Sill Plates', desc:'Set of 4 stylish plates welcome you with a premium touch from illuminated front plates.', price:425 },
+    { id:'wdeflect90', name:'Moonroof Wind Deflector', desc:'UV- and scratch-resistant smoked acrylic for a quieter, more open-air experience.', price:225 },
+    { id:'petramp90', name:'Pet Ramp', desc:'Makes it easy for your pets to glide in and hit the road with you.', price:175 },
+    { id:'petseat90', name:'Pet Seat Protector', desc:'Comfortable way for pets to travel while protecting your seats from accidents and damage.', price:85 },
+    { id:'petrest90', name:'Pet Restraint', desc:'Helps keep your pets safely in place so you can focus on the road.', price:40 },
+    { id:'roadkit90', name:'Roadside Assistance Kit', desc:'Essential emergency tools and supplies for peace of mind on every drive.', price:65 },
+    { id:'firstaid90', name:'First Aid Kit', desc:'Compact, fully stocked emergency medical kit for your vehicle.', price:35 },
+  ],
+
+  "2026 Mazda CX-90 PHEV": [
+    { id:'awfm90p', name:'All-Weather Floor Mats', desc:'Custom-fitted mats that guard against snow, mud, sand and whatever else comes through the door. Set of 4.', price:175 },
+    { id:'cmat90p', name:'Carpet Floor Mats', desc:'Premium carpet mats with contrast stitching and integrated heel pad. Set of 4.', price:145 },
+    { id:'ctray90p', name:'Cargo Tray', desc:'Flexible, durable cargo tray with grooves to divert and catch messy liquids.', price:120 },
+    { id:'cnet90p', name:'Cargo Net', desc:'Keeps equipment and personal items secure in the cargo area during transit.', price:55 },
+    { id:'ccover90p', name:'Retractable Cargo Cover', desc:'Protects your valuables, keeps gear cool and is easy to install and remove.', price:350 },
+    { id:'xbar90p', name:'Crossbars', desc:'Easy to install and remove with enhanced locking mechanism. Compatible with all roof attachments.', price:450 },
+    { id:'rbasket90p', name:'Roof Basket', desc:'Expandable netting keeps bulky items secure on the roof. Requires crossbars.', price:550 },
+    { id:'rbike90p', name:'Bike Carrier', desc:'Ratcheting cradle strap for quick attachment. 2- or 4-bike style.', price:300 },
+    { id:'rcargo90p', name:'Roof Cargo Box', desc:'Low-profile carrier provides effortless loading. Requires crossbars.', price:650 },
+    { id:'tow90p', name:'Tow Hitch', desc:'2-inch receiver hitch designed for CX-90 PHEV. Hitch plug included.', price:575 },
+    { id:'towhar90p', name:'Tow Hitch Harness', desc:'4-pin wiring harness for trailer lighting.', price:110 },
+    { id:'splash90pf', name:'Splash Guards – Front', desc:'Protect your finish from rocks and road debris. Set of 2.', price:110 },
+    { id:'splash90pr', name:'Splash Guards – Rear', desc:'Protect your finish from rocks and road debris. Set of 2.', price:100 },
+    { id:'bguard90p', name:'Rear Bumper Guard', desc:'Stainless steel bumper guard protects from chips and scratches.', price:150 },
+    { id:'dsill90p', name:'Illuminated Door Sill Plates', desc:'Set of 4 with illuminated front plates for a premium welcome.', price:425 },
+    { id:'wdeflect90p', name:'Moonroof Wind Deflector', desc:'Smoked acrylic for a quieter, open-air experience.', price:225 },
+    { id:'petramp90p', name:'Pet Ramp', desc:'Makes it easy for pets to enter your vehicle.', price:175 },
+    { id:'petseat90p', name:'Pet Seat Protector', desc:'Protects seats from pet accidents and damage.', price:85 },
+    { id:'roadkit90p', name:'Roadside Assistance Kit', desc:'Essential emergency tools and supplies.', price:65 },
+  ],
+
+  "2026 Mazda CX-70": [
+    { id:'awfm70', name:'All-Weather Floor Mats', desc:'Custom-fitted mats that protect against snow, mud, sand and spills. Set of 4.', price:165 },
+    { id:'cmat70', name:'Carpet Floor Mats', desc:'Premium carpet mats with contrast stitching and heel pad. Set of 4.', price:140 },
+    { id:'ctray70', name:'Cargo Tray', desc:'Durable cargo tray with raised grooves to divert and catch spills.', price:115 },
+    { id:'cnet70', name:'Cargo Net', desc:'Secure loose items in the cargo area during transport.', price:55 },
+    { id:'ccover70', name:'Retractable Cargo Cover', desc:'Keeps valuables safe, hidden and cool.', price:325 },
+    { id:'xbar70', name:'Crossbars', desc:'Compatible with all roof attachments. Locking mechanism for security.', price:450 },
+    { id:'rbasket70', name:'Roof Basket', desc:'Expandable netting for bulky items. Requires crossbars.', price:550 },
+    { id:'rbike70', name:'Bike Carrier', desc:'Ratcheting cradle strap, fold-down arms. 2- or 4-bike.', price:300 },
+    { id:'rcargo70', name:'Roof Cargo Box', desc:'Low-profile carrier for effortless loading.', price:650 },
+    { id:'tow70', name:'Tow Hitch', desc:'2-inch receiver hitch designed for CX-70. Hitch plug included.', price:550 },
+    { id:'towhar70', name:'Tow Hitch Harness', desc:'4-pin wiring harness for trailer lighting.', price:110 },
+    { id:'splash70f', name:'Splash Guards – Front', desc:'Protect your finish from road debris. Set of 2.', price:110 },
+    { id:'splash70r', name:'Splash Guards – Rear', desc:'Protect your finish from road debris. Set of 2.', price:100 },
+    { id:'bguard70', name:'Rear Bumper Guard', desc:'Stainless steel protection from chips and scratches.', price:140 },
+    { id:'dsill70', name:'Illuminated Door Sill Plates', desc:'Premium illuminated plates for a luxury welcome. Set of 4.', price:400 },
+    { id:'wdeflect70', name:'Moonroof Wind Deflector', desc:'Smoked acrylic for a quieter open-air drive.', price:225 },
+    { id:'petramp70', name:'Pet Ramp', desc:'Easy entry for your pets.', price:175 },
+    { id:'petseat70', name:'Pet Seat Protector', desc:'Protects seats during pet travel.', price:85 },
+    { id:'roadkit70', name:'Roadside Assistance Kit', desc:'Essential emergency tools and supplies.', price:65 },
+  ],
+
+  "2026 Mazda CX-70 PHEV": [
+    { id:'awfm70p', name:'All-Weather Floor Mats', desc:'Custom-fitted protection against snow, mud, sand and spills. Set of 4.', price:165 },
+    { id:'cmat70p', name:'Carpet Floor Mats', desc:'Premium carpet mats with contrast stitching. Set of 4.', price:140 },
+    { id:'ctray70p', name:'Cargo Tray', desc:'Durable cargo tray with spill-catching grooves.', price:115 },
+    { id:'cnet70p', name:'Cargo Net', desc:'Keeps items secure during transport.', price:55 },
+    { id:'xbar70p', name:'Crossbars', desc:'Compatible with all roof attachments with locking mechanism.', price:450 },
+    { id:'rbasket70p', name:'Roof Basket', desc:'Expandable netting for bulky items.', price:550 },
+    { id:'tow70p', name:'Tow Hitch', desc:'2-inch receiver hitch for CX-70 PHEV.', price:550 },
+    { id:'splash70pf', name:'Splash Guards – Front', desc:'Protect finish from road debris. Set of 2.', price:110 },
+    { id:'splash70pr', name:'Splash Guards – Rear', desc:'Protect finish from road debris. Set of 2.', price:100 },
+    { id:'bguard70p', name:'Rear Bumper Guard', desc:'Stainless steel chip and scratch protection.', price:140 },
+    { id:'dsill70p', name:'Illuminated Door Sill Plates', desc:'Premium illuminated welcome plates. Set of 4.', price:400 },
+    { id:'roadkit70p', name:'Roadside Assistance Kit', desc:'Essential emergency tools and supplies.', price:65 },
+  ],
+
+  "2026 Mazda CX-50": [
+    { id:'awfm50', name:'All-Weather Floor Mats', desc:'Custom-fitted to your CX-50. Easy to remove and clean. Set of 4.', price:155 },
+    { id:'cmat50', name:'Carpet Floor Mats', desc:'Contrast stitching, luxurious carpet material and integrated heel pad. Set of 4.', price:135 },
+    { id:'cliner50', name:'Cargo Liner', desc:'Durable, easy to clean. Works with rear seats folded, upright or split.', price:130 },
+    { id:'ccover50', name:'Retractable Cargo Cover', desc:'Protects valuables, keeps gear cool. Easy to install and remove.', price:325 },
+    { id:'cnet50', name:'Cargo Net', desc:'Keeps items secure in the cargo area during transport.', price:50 },
+    { id:'xbar50', name:'Crossbars', desc:'Specially designed for CX-50. Compatible with all roof attachments. Locking mechanism.', price:400 },
+    { id:'rbag50', name:'Roof Cargo Bag', desc:'Store up to 16 cu ft of luggage. Maintains full trunk access. Medium and large sizes.', price:275 },
+    { id:'rcarrier50', name:'Roof Cargo Carrier', desc:'Low-profile carrier designed for crossbars. Blends seamlessly with CX-50.', price:550 },
+    { id:'rbike50', name:'Bike Carrier', desc:'Ratcheting cradle strap, fold-down arms. 2- or 4-bike style.', price:300 },
+    { id:'rski50', name:'Ski / Snowboard Carrier', desc:'Securely carries skis and snowboards on your roof.', price:325 },
+    { id:'rkayak50', name:'Kayak Carrier', desc:'Secure mounting system for kayaks. Requires crossbars.', price:275 },
+    { id:'rtent50', name:'Rooftop Tent', desc:'3-person tent with mesh panel, retractable ladder and foam mattress. Easy deploy.', price:2500 },
+    { id:'tow50', name:'Tow Hitch', desc:'Tow hitch receiver designed for your CX-50.', price:475 },
+    { id:'towhar50', name:'Tow Hitch Harness', desc:'4-pin wiring harness for trailer lighting.', price:95 },
+    { id:'splash50f', name:'Splash Guards – Front', desc:'Protect finish from rocks and road debris. Set of 2.', price:100 },
+    { id:'splash50r', name:'Splash Guards – Rear', desc:'Protect finish from rocks and road debris. Set of 2.', price:95 },
+    { id:'bguard50', name:'Rear Bumper Guard', desc:'Protects rear bumper from chips and scratches during loading.', price:130 },
+    { id:'dsill50', name:'Door Sill Trim Plates', desc:'Protect door sills from scuffs and add a premium touch.', price:175 },
+    { id:'roadkit50', name:'Roadside Assistance Kit', desc:'Essential emergency tools and supplies.', price:65 },
+    { id:'firstaid50', name:'First Aid Kit', desc:'Compact emergency medical kit.', price:35 },
+  ],
+
+  "2026 Mazda CX-50 Hybrid": [
+    { id:'awfm50h', name:'All-Weather Floor Mats', desc:'Custom-fitted. Easy to remove and clean. Set of 4.', price:155 },
+    { id:'cmat50h', name:'Carpet Floor Mats', desc:'Contrast stitching, luxurious material with heel pad. Set of 4.', price:135 },
+    { id:'cliner50h', name:'Cargo Liner', desc:'Durable, works with seats folded or upright.', price:130 },
+    { id:'ccover50h', name:'Retractable Cargo Cover', desc:'Protects valuables. Easy install and remove.', price:325 },
+    { id:'cnet50h', name:'Cargo Net', desc:'Keeps items secure during transport.', price:50 },
+    { id:'xbar50h', name:'Crossbars', desc:'Designed for CX-50 Hybrid. Compatible with all roof attachments.', price:400 },
+    { id:'rbag50h', name:'Roof Cargo Bag', desc:'Up to 16 cu ft of luggage capacity.', price:275 },
+    { id:'rcarrier50h', name:'Roof Cargo Carrier', desc:'Low-profile, seamless design.', price:550 },
+    { id:'rbike50h', name:'Bike Carrier', desc:'Ratcheting cradle, fold-down arms. 2- or 4-bike.', price:300 },
+    { id:'rtent50h', name:'Rooftop Tent', desc:'3-person, mesh panel, retractable ladder, foam mattress.', price:2500 },
+    { id:'splash50hf', name:'Splash Guards – Front', desc:'Protect finish from road debris. Set of 2.', price:100 },
+    { id:'splash50hr', name:'Splash Guards – Rear', desc:'Protect finish from road debris. Set of 2.', price:95 },
+    { id:'bguard50h', name:'Rear Bumper Guard', desc:'Protects from chips and scratches.', price:130 },
+    { id:'dsill50h', name:'Door Sill Trim Plates', desc:'Premium sill protection.', price:175 },
+    { id:'roadkit50h', name:'Roadside Assistance Kit', desc:'Essential emergency tools.', price:65 },
+  ],
+
+  "2026 Mazda CX-5": [
+    { id:'awfm5', name:'All-Weather Floor Mats', desc:'Custom-fitted to your CX-5. Guard against snow, mud, sand. Set of 4.', price:145 },
+    { id:'cmat5', name:'Carpet Floor Mats', desc:'Premium carpet mats preserve interior carpet. Set of 4.', price:125 },
+    { id:'ctray5', name:'Cargo Tray', desc:'Flexible tray with grooves to divert and catch messy liquids.', price:100 },
+    { id:'ccmat5', name:'Carpet Cargo Mat', desc:'Thick pile carpet foundation for sensitive cargo. Reduces road noise.', price:90 },
+    { id:'cnet5', name:'Cargo Net', desc:'Secure groceries, sports equipment and loose items.', price:45 },
+    { id:'xbar5', name:'Crossbars', desc:'Compatible with full range of roof attachments. Locking mechanism.', price:350 },
+    { id:'rrails5', name:'Roof Rails', desc:'Side rails that enable crossbar and roof attachment mounting.', price:325 },
+    { id:'rbike5', name:'Bike Carrier', desc:'Secure bike transport on your roof rack.', price:275 },
+    { id:'rcargo5', name:'Roof Cargo Box', desc:'Additional enclosed cargo storage on your roof.', price:575 },
+    { id:'tow5', name:'Trailer Hitch', desc:'Custom-configured hitch for CX-5 towing capability.', price:425 },
+    { id:'towhar5', name:'Tow Hitch Harness', desc:'4-pin trailer lighting connector.', price:85 },
+    { id:'splash5f', name:'Splash Guards – Front', desc:'Protect your finish from rocks and debris. Set of 2.', price:95 },
+    { id:'splash5r', name:'Splash Guards – Rear', desc:'Protect your finish from rocks and debris. Set of 2.', price:85 },
+    { id:'bguard5', name:'Rear Bumper Guard', desc:'Protects bumper from chips and scratches when loading/unloading.', price:130 },
+    { id:'dsill5', name:'Door Sill Trim Plates', desc:'Protect door sills from scuffs with a polished finish.', price:150 },
+    { id:'wdeflect5', name:'Moonroof Wind Deflector', desc:'Smoked acrylic reduces wind noise with moonroof open.', price:195 },
+    { id:'wlight5', name:'Exterior Welcome Light', desc:'Warm glow beneath the vehicle as you approach.', price:225 },
+    { id:'logolight5', name:'Logo Welcome Light', desc:'LED projectors display a Mazda logo onto the ground.', price:200 },
+    { id:'roadkit5', name:'Roadside Assistance Kit', desc:'Essential emergency tools and supplies.', price:65 },
+    { id:'firstaid5', name:'First Aid Kit', desc:'Compact emergency medical kit.', price:35 },
+  ],
+
+  "2025 Mazda CX-5": [
+    { id:'awfm5_25', name:'All-Weather Floor Mats', desc:'Custom-fitted to your CX-5. Set of 4.', price:145 },
+    { id:'cmat5_25', name:'Carpet Floor Mats', desc:'Premium carpet mats. Set of 4.', price:120 },
+    { id:'ctray5_25', name:'Cargo Tray', desc:'Flexible tray with spill-catching grooves.', price:100 },
+    { id:'ccmat5_25', name:'Carpet Cargo Mat', desc:'Thick pile carpet for sensitive cargo.', price:85 },
+    { id:'cnet5_25', name:'Cargo Net', desc:'Secure loose items in the cargo area.', price:45 },
+    { id:'xbar5_25', name:'Crossbars', desc:'Compatible with all roof attachments.', price:350 },
+    { id:'rrails5_25', name:'Roof Rails & Crossbars Package', desc:'Side rails and crossbars for full roof rack capability.', price:525 },
+    { id:'tow5_25', name:'Trailer Hitch', desc:'Custom-fitted hitch for CX-5 towing.', price:425 },
+    { id:'splash5f_25', name:'Splash Guards – Front', desc:'Protect finish from road debris. Set of 2.', price:90 },
+    { id:'splash5r_25', name:'Splash Guards – Rear', desc:'Protect finish from road debris. Set of 2.', price:80 },
+    { id:'bguard5_25', name:'Rear Bumper Guard', desc:'Protects bumper during loading.', price:120 },
+    { id:'dsill5_25', name:'Door Sill Trim Plates', desc:'Polished sill protection.', price:140 },
+    { id:'wdeflect5_25', name:'Moonroof Wind Deflector', desc:'Smoked acrylic for quieter open-air driving.', price:195 },
+    { id:'roadkit5_25', name:'Roadside Assistance Kit', desc:'Essential emergency tools.', price:60 },
+  ],
+
+  "2026 Mazda CX-30": [
+    { id:'awfm30', name:'All-Weather Floor Mats', desc:'Custom-fitted protection from snow, mud, sand and spills. Set of 4.', price:140 },
+    { id:'cmat30', name:'Carpet Floor Mats', desc:'Premium carpet mats with heel pad protection. Set of 4.', price:115 },
+    { id:'ctray30', name:'Cargo Tray', desc:'Flexible, removable tray diverts spills and protects against damage.', price:95 },
+    { id:'ccover30', name:'Retractable Cargo Cover', desc:'Keeps valuables safe, hidden and cool.', price:295 },
+    { id:'cnet30', name:'Cargo Net', desc:'Secure items in the cargo area.', price:45 },
+    { id:'xbar30', name:'Crossbars', desc:'Compatible with roof attachments for bikes, skis, cargo and more.', price:350 },
+    { id:'rbasket30', name:'Roof Basket', desc:'Expandable netting for bulky items. Requires crossbars.', price:475 },
+    { id:'rbike30', name:'Bike Carrier', desc:'Ratcheting cradle strap, fold-down arms.', price:275 },
+    { id:'splash30f', name:'Splash Guards – Front', desc:'Protect finish from rocks and debris. Set of 2.', price:90 },
+    { id:'splash30r', name:'Splash Guards – Rear', desc:'Protect finish from rocks and debris. Set of 2.', price:80 },
+    { id:'bguard30', name:'Rear Bumper Guard', desc:'Stainless steel protection from chips and scratches.', price:120 },
+    { id:'dsill30', name:'Illuminated Door Sill Plates', desc:'Set of 4 with illuminated front plates.', price:375 },
+    { id:'wheels30', name:'Gloss Black Wheels', desc:'Eye-catching gloss black wheels for refined sophistication.', price:1200 },
+    { id:'mirror30', name:'Auto-Dimming Mirror w/ HomeLink', desc:'Smart mirror reduces glare. Program garage doors, gates and lights.', price:375 },
+    { id:'roadkit30', name:'Roadside Assistance Kit', desc:'Essential emergency tools and supplies.', price:60 },
+  ],
+
+  "2026 Mazda3 Sedan": [
+    { id:'awfm3s', name:'All-Weather Floor Mats', desc:'Custom-fit mats designed to hold generous amounts of liquid and mud. Set of 4.', price:135 },
+    { id:'cmat3s', name:'Carpet Floor Mats', desc:'Premium carpet mats for interior protection. Set of 4.', price:110 },
+    { id:'ctray3s', name:'Cargo Tray', desc:'Flexible, durable tray with grooves to divert and catch spills.', price:85 },
+    { id:'cnet3s', name:'Cargo Net', desc:'Keeps items secure in the trunk.', price:45 },
+    { id:'xbar3s', name:'Crossbars', desc:'Hold all sorts of gear with range of attachments for bikes, skis, cargo. Requires roof moldings.', price:325 },
+    { id:'rmold3s', name:'Roof Moldings', desc:'Required base for crossbar installation on Mazda3 Sedan.', price:175 },
+    { id:'splash3sf', name:'Splash Guards – Front', desc:'Protect finish from rocks and debris. Set of 2.', price:80 },
+    { id:'splash3sr', name:'Splash Guards – Rear', desc:'Protect finish from rocks and debris. Set of 2.', price:75 },
+    { id:'bguard3s', name:'Rear Bumper Guard', desc:'Stainless steel protection from unwanted chips and scratches.', price:115 },
+    { id:'rspoiler3s', name:'Rear Lip Spoiler', desc:'Aerodynamic rear spoiler available in all Mazda3 colors.', price:375 },
+    { id:'roadkit3s', name:'Roadside Assistance Kit', desc:'Essential emergency tools and supplies.', price:60 },
+    { id:'firstaid3s', name:'First Aid Kit', desc:'Compact emergency medical kit.', price:30 },
+  ],
+
+  "2026 Mazda3 Hatchback": [
+    { id:'awfm3h', name:'All-Weather Floor Mats', desc:'Custom-fit mats designed to hold generous amounts of liquid and mud. Set of 4.', price:135 },
+    { id:'cmat3h', name:'Carpet Floor Mats', desc:'Premium carpet mats for interior protection. Set of 4.', price:110 },
+    { id:'ctray3h', name:'Cargo Tray', desc:'Protects against damage and spills with diverting grooves.', price:85 },
+    { id:'cnet3h', name:'Cargo Net', desc:'Keeps items secure in the hatch area.', price:45 },
+    { id:'xbar3h', name:'Crossbars', desc:'Versatile crossbars for bikes, skis, snowboards and more. Requires roof moldings.', price:325 },
+    { id:'rmold3h', name:'Roof Moldings', desc:'Required base for crossbar installation on Mazda3 Hatchback.', price:175 },
+    { id:'splash3hf', name:'Splash Guards – Front', desc:'Protect finish from road debris. Set of 2.', price:80 },
+    { id:'splash3hr', name:'Splash Guards – Rear', desc:'Protect finish from road debris. Set of 2.', price:75 },
+    { id:'bguard3h', name:'Rear Bumper Guard', desc:'Available in stainless steel and black. Protects during loading.', price:115 },
+    { id:'rspoiler3h', name:'Rear Lip Spoiler', desc:'Aerodynamic rear spoiler in all Mazda3 colors.', price:375 },
+    { id:'roadkit3h', name:'Roadside Assistance Kit', desc:'Essential emergency tools.', price:60 },
+    { id:'firstaid3h', name:'First Aid Kit', desc:'Compact emergency medical kit.', price:30 },
+  ],
+
+  "2026 Mazda MX-5 Miata": [
+    { id:'awfm_mx', name:'All-Weather Floor Mats', desc:'Custom-fitted protection from the elements. Set of 2.', price:95 },
+    { id:'cmat_mx', name:'Carpet Floor Mats', desc:'Premium carpet mats for MX-5 cockpit. Set of 2.', price:85 },
+    { id:'ctray_mx', name:'Cargo Tray', desc:'Flexible tray with grooves that divert messy liquids.', price:70 },
+    { id:'cnet_mx', name:'Cargo Net', desc:'Keeps items secure in the trunk.', price:40 },
+    { id:'splash_mxf', name:'Splash Guards – Front', desc:'Protect paint from rocks and road debris. Set of 2.', price:80 },
+    { id:'splash_mxr', name:'Splash Guards – Rear', desc:'Protect paint from rocks and road debris. Set of 2.', price:75 },
+    { id:'fdam_mx', name:'Front Air Dam', desc:'Aerodynamic design that commands attention.', price:425 },
+    { id:'ssill_mx', name:'Side Sills', desc:'Complete the sporty ground effects look. Pair with Air Dam and Diffuser.', price:550 },
+    { id:'rdiff_mx', name:'Rear Diffuser', desc:'Motorsports-inspired diffuser for a racetrack-ready look.', price:450 },
+    { id:'rspoiler_mx', name:'Rear Lip Spoiler', desc:'Available in all MX-5 Miata colors.', price:375 },
+    { id:'accent_mx', name:'Cockpit Accent Lighting', desc:'Understated white accent lighting for the MX-5 cockpit.', price:175 },
+    { id:'roadkit_mx', name:'Roadside Assistance Kit', desc:'Essential emergency tools.', price:55 },
+  ],
+
+  "2026 Mazda MX-5 Miata RF": [
+    { id:'awfm_mxr', name:'All-Weather Floor Mats', desc:'Custom-fitted protection from the elements. Set of 2.', price:95 },
+    { id:'cmat_mxr', name:'Carpet Floor Mats', desc:'Premium carpet mats for MX-5 RF cockpit. Set of 2.', price:85 },
+    { id:'ctray_mxr', name:'Cargo Tray', desc:'Flexible tray with spill-catching grooves.', price:70 },
+    { id:'cnet_mxr', name:'Cargo Net', desc:'Keeps items secure in the trunk.', price:40 },
+    { id:'splash_mxrf', name:'Splash Guards – Front', desc:'Protect paint from road debris. Set of 2.', price:80 },
+    { id:'splash_mxrr', name:'Splash Guards – Rear', desc:'Protect paint from road debris. Set of 2.', price:75 },
+    { id:'fdam_mxr', name:'Front Air Dam', desc:'Aerodynamic design that commands attention.', price:425 },
+    { id:'ssill_mxr', name:'Side Sills', desc:'Sporty ground effects. Pair with Air Dam and Diffuser.', price:550 },
+    { id:'rdiff_mxr', name:'Rear Diffuser', desc:'Motorsports-inspired rear diffuser.', price:450 },
+    { id:'rspoiler_mxr', name:'Rear Lip Spoiler', desc:'Available in all MX-5 Miata RF colors.', price:375 },
+    { id:'accent_mxr', name:'Cockpit Accent Lighting', desc:'Understated white accent lighting.', price:175 },
+    { id:'roadkit_mxr', name:'Roadside Assistance Kit', desc:'Essential emergency tools.', price:55 },
+  ],
+};
+
+// Build the vehicle selector dropdown
+const vehicleSelect = document.getElementById('vehicle-select');
+Object.keys(vehicleAccessories).forEach(model => {
+  const opt = document.createElement('option');
+  opt.value = model;
+  opt.textContent = model;
+  vehicleSelect.appendChild(opt);
+});
+
+let currentProducts = [];
+const selected = new Set();
+let isCash = false;
+
+function fmt(n) { return '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function calcMonthly(total, months, rate) {
+  if (!rate) return total / months;
+  const r = rate / 100 / 12;
+  return total * r / (1 - Math.pow(1+r,-months));
+}
+
+function updateTotals() {
+  const term = parseInt(document.getElementById('term-select').value);
+  const rate = parseFloat(document.getElementById('rate-input').value) || 0;
+  let subtotal = 0, names = [];
+  selected.forEach(id => {
+    if (id === 'other') {
+      const val = parseFloat(document.getElementById('price-other')?.value) || 0;
+      const nm = document.getElementById('other-name-input')?.value.trim() || 'Other';
+      subtotal += val; names.push(nm);
+    } else {
+      const p = currentProducts.find(x => x.id === id);
+      if (p) { subtotal += parseFloat(document.getElementById('price-'+id)?.value) || 0; names.push(p.name); }
+    }
+  });
+  const tax = subtotal * TAX, total = subtotal + tax;
+  const monthly = (!isCash && selected.size > 0) ? calcMonthly(total, term, rate) : 0;
+  document.getElementById('item-count').textContent = selected.size;
+  document.getElementById('item-total-sub').textContent = 'of ' + currentProducts.length + ' products';
+  document.getElementById('total-price').textContent = '$' + Math.round(subtotal).toLocaleString('en-US');
+  document.getElementById('subtotal-line').textContent = fmt(subtotal);
+  document.getElementById('tax-line').textContent = fmt(tax);
+  document.getElementById('total-with-tax').textContent = fmt(total);
+  document.getElementById('term-display').textContent = 'over ' + term + ' months';
+  document.getElementById('selected-list').textContent = names.length ? names.join(' · ') : 'No items selected';
+  const mc = document.getElementById('monthly-card');
+  if (isCash) { mc.style.opacity='0.35'; document.getElementById('monthly-bump').textContent='N/A'; }
+  else { mc.style.opacity='1'; document.getElementById('monthly-bump').textContent = selected.size > 0 ? '+'+fmt(monthly).replace('.00','')+'/mo' : '$0/mo'; }
+}
+
+function renderProducts(model) {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = '';
+  selected.clear();
+  currentProducts = vehicleAccessories[model] || [];
+
+  document.getElementById('product-count-badge').textContent = currentProducts.length > 0
+    ? currentProducts.length + ' accessories available for ' + model
+    : '';
+
+  // Auto-fill vehicle field
+  document.getElementById('f-vehicle').value = model;
+
+  currentProducts.forEach(p => {
+    const row = document.createElement('div'); row.className = 'product-row';
+    row.innerHTML = `<div class="check-box"><div class="check-mark">&#10003;</div></div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-desc">${p.desc}</div></div><div class="product-pricing"><div class="price-input-wrap"><span class="price-symbol">$</span><input class="price-input" type="number" id="price-${p.id}" value="${p.price}" min="0" step="1"></div><div class="price-note">+ 7.5% tax</div></div>`;
+    row.addEventListener('click', e => { if (e.target.classList.contains('price-input')) return; selected.has(p.id)?selected.delete(p.id):selected.add(p.id); row.classList.toggle('selected',selected.has(p.id)); updateTotals(); });
+    row.querySelector('.price-input').addEventListener('input', updateTotals);
+    grid.appendChild(row);
+  });
+
+  // Add "Other" custom row
+  const other = document.createElement('div'); other.className = 'other-row';
+  other.innerHTML = `<div class="check-box"><div class="check-mark">&#10003;</div></div><div class="product-info"><input class="other-name-input" id="other-name-input" type="text" placeholder="Add custom product name..."><input class="other-desc-input" id="other-desc-input" type="text" placeholder="Short description (optional)"></div><div class="product-pricing"><div class="price-input-wrap"><span class="price-symbol">$</span><input class="price-input" type="number" id="price-other" value="0" min="0" step="1"></div><div class="price-note">+ 7.5% tax</div></div>`;
+  other.addEventListener('click', e => { if (['price-input','other-name-input','other-desc-input'].some(c=>e.target.classList.contains(c))) return; selected.has('other')?selected.delete('other'):selected.add('other'); other.classList.toggle('selected',selected.has('other')); updateTotals(); });
+  other.querySelector('#price-other').addEventListener('input', updateTotals);
+  other.querySelector('#other-name-input').addEventListener('input', updateTotals);
+  grid.appendChild(other);
+
+  updateTotals();
+}
+
+vehicleSelect.addEventListener('change', function() {
+  if (this.value) renderProducts(this.value);
+  else {
+    document.getElementById('products-grid').innerHTML = '';
+    document.getElementById('product-count-badge').textContent = '';
+    selected.clear();
+    currentProducts = [];
+    updateTotals();
+  }
+});
+
+function clearAll() {
+  selected.clear();
+  document.querySelectorAll('.product-row,.other-row').forEach(r => r.classList.remove('selected'));
+  const ni = document.getElementById('other-name-input'), di = document.getElementById('other-desc-input');
+  if (ni) ni.value = ''; if (di) di.value = '';
+  clearSig('sig-customer','ph-customer'); clearSig('sig-associate','ph-associate');
+  updateTotals();
+}
+
+document.getElementById('cash-toggle').addEventListener('click', function() {
+  isCash = !isCash; this.classList.toggle('active', isCash);
+  document.getElementById('finance-controls').style.display = isCash ? 'none' : 'flex';
+  document.getElementById('cash-sub').textContent = isCash ? 'Cash deal — monthly payment hidden' : 'Toggle to hide monthly payment';
+  updateTotals();
+});
+
+const sigState = {};
+function initSigPad(canvasId, placeholderId) {
+  const canvas = document.getElementById(canvasId);
+  const ph = document.getElementById(placeholderId);
+  const container = canvas.parentElement;
+  let drawing = false;
+  sigState[canvasId] = { hasSig: false };
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = container.clientWidth || 300;
+    canvas.width = w * dpr; canvas.height = 90 * dpr;
+    canvas.style.width = w + 'px'; canvas.style.height = '90px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = '#1a1a18'; ctx.lineWidth = 1.8; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  }
+  function getPos(e) { const rect = canvas.getBoundingClientRect(); const src = e.touches ? e.touches[0] : e; return { x: src.clientX - rect.left, y: src.clientY - rect.top }; }
+  canvas.addEventListener('mousedown', e => { e.preventDefault(); drawing = true; const p = getPos(e); canvas.getContext('2d').beginPath(); canvas.getContext('2d').moveTo(p.x,p.y); });
+  canvas.addEventListener('mousemove', e => { if (!drawing) return; const ctx = canvas.getContext('2d'); const p = getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x,p.y); if (!sigState[canvasId].hasSig) { sigState[canvasId].hasSig=true; ph.style.display='none'; } });
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('mouseleave', () => drawing = false);
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); canvas.getContext('2d').beginPath(); canvas.getContext('2d').moveTo(p.x,p.y); }, {passive:false});
+  canvas.addEventListener('touchmove', e => { if (!drawing) return; e.preventDefault(); const ctx = canvas.getContext('2d'); const p = getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x,p.y); if (!sigState[canvasId].hasSig) { sigState[canvasId].hasSig=true; ph.style.display='none'; } }, {passive:false});
+  canvas.addEventListener('touchend', () => drawing = false);
+  resize();
+}
+function clearSig(canvasId, placeholderId) {
+  const canvas = document.getElementById(canvasId);
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  document.getElementById(placeholderId).style.display = 'block';
+  if (sigState[canvasId]) sigState[canvasId].hasSig = false;
+}
+
+document.getElementById('f-date').valueAsDate = new Date();
+document.getElementById('term-select').addEventListener('change', updateTotals);
+document.getElementById('rate-input').addEventListener('input', updateTotals);
+updateTotals();
+window.addEventListener('load', () => { initSigPad('sig-customer','ph-customer'); initSigPad('sig-associate','ph-associate'); });
+</script>
+</body>
+</html>
