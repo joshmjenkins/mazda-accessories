@@ -8,408 +8,234 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    color-scheme: light;
-    --bg: #f1f1f1;
-    --surface: #ffffff;
-    --surface-2: #f7f7f7;
-    --surface-3: #ececec;
-    --line: rgba(0,0,0,0.09);
-    --line-strong: rgba(0,0,0,0.24);
-    --text: #101010;
-    --text-2: #4d4d4d;
-    --muted: #767676;
-    --faint: #b0b0b0;
-    --accent: #a50d2a;
-    --accent-deep: #910a2d;
-    --accent-soft: rgba(165,13,42,0.08);
-    --gold: #9d1a2f;
-    --gold-soft: rgba(157,26,47,0.06);
-    --gold-line: rgba(157,26,47,0.4);
-    --green: #1b8562;
-    --green-soft: rgba(27,133,98,0.09);
-    --paper: #ffffff;
-    --serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: var(--sans); font-weight: 400; color: var(--text);
-    background: var(--bg);
-    background-image: none;
-    background-repeat: no-repeat;
-    padding: 2.5rem 1rem 4rem; line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
-  }
-  input, select, button { font-family: inherit; }
-  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  input[type=number] { -moz-appearance: textfield; appearance: textfield; }
-  ::placeholder { color: var(--faint); }
+:root{
+  --bg:#f1f1f1; --panel:#ffffff; --ink:#101010; --ink2:#4d4d4d; --muted:#767676; --faint:#b0b0b0;
+  --red:#9d1a2f; --red-dk:#7a0f22; --red-soft:rgba(157,26,47,.06); --red-line:rgba(157,26,47,.4);
+  --line:rgba(0,0,0,.1); --line2:rgba(0,0,0,.24); --green:#1b8562;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg)}
+body{font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.45}
+input,select,button{font-family:inherit;color:inherit;outline:none}
+input::placeholder{color:var(--faint)}
+.wrap{max-width:1280px;width:100%;margin:0 auto;padding:0 48px}
+.shell{min-height:100vh;display:flex;flex-direction:column}
 
-  .menu-wrap { max-width: 920px; margin: 0 auto; }
+/* header */
+.top{background:#101010;border-bottom:3px solid var(--red);color:#fff}
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:18px;min-width:0}
+.logo{width:58px;height:58px;flex:none;fill:#e4e4e4}
+.brand-name{font-size:26px;font-weight:300;letter-spacing:.14em;text-transform:uppercase;line-height:1.1}
+.brand-sub{font-size:10px;letter-spacing:.28em;color:#b4b4b4;margin-top:7px;text-transform:uppercase}
+.hdr-right{display:flex;align-items:center;gap:28px}
+.total-big{font-size:32px;font-weight:300;line-height:1;font-variant-numeric:tabular-nums;text-align:right}
+.total-cap{font-size:10px;letter-spacing:.24em;color:#b4b4b4;margin-top:7px;text-align:right}
+.btn-ghost{font-size:10px;font-weight:600;letter-spacing:.2em;color:#fff;border:1px solid rgba(255,255,255,.4);
+  padding:10px 15px;cursor:pointer;background:none;white-space:nowrap}
+.btn-ghost:hover{background:var(--red);border-color:var(--red)}
 
-  /* ── Cards ── */
-  .header-card, .totals-card, .sig-card, .bundle-builder-card {
-    background: var(--surface); border: 1px solid var(--line); border-radius: 4px;
-    padding: 1.75rem; margin-bottom: 1.5rem;
-  }
+/* step nav */
+.nav{background:var(--panel);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.steps{display:flex;gap:34px}
+.step{cursor:pointer;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;
+  padding:18px 0 16px;letter-spacing:.22em;font-size:11px;font-weight:600}
+.step:hover{color:var(--red)}
+.step.on{color:var(--ink);border-bottom-color:var(--red)}
+.veh-line{font-size:11px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
 
-  /* ── Header ── */
-  .header-card { padding: 2.25rem 1.75rem 1.75rem; position: relative; overflow: hidden; }
-  .header-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent); }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.75rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); gap: 1rem; flex-wrap: wrap; }
-  .dealership-name { font-family: var(--serif); font-size: 38px; font-weight: 500; line-height: 1.1; letter-spacing: 0.01em; color: var(--text); outline: none; min-width: 120px; border-bottom: 1px solid transparent; }
-  .dealership-name:focus { border-bottom-color: var(--gold); }
-  .header-sub { font-size: 11px; color: var(--gold); margin-top: 10px; letter-spacing: 0.28em; text-transform: uppercase; }
-  .tag { font-size: 10px; font-weight: 500; color: var(--gold); border: 1px solid var(--gold-line); padding: 7px 14px; border-radius: 2px; letter-spacing: 0.24em; text-transform: uppercase; white-space: nowrap; }
-  .deal-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 18px 22px; }
-  .field-group { display: flex; flex-direction: column; gap: 4px; }
-  .field-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em; }
-  .field-group input, .field-group select { font-size: 15px; padding: 8px 0; border: none; border-bottom: 1px solid var(--line-strong); border-radius: 0; background: transparent; color: var(--text); width: 100%; }
-  .field-group input:focus, .field-group select:focus { outline: none; border-bottom-color: var(--gold); }
+/* generic */
+h2.title{font-size:26px;font-weight:300;letter-spacing:.06em;text-transform:uppercase;margin:0}
+h2.title::after{content:'';display:block;width:34px;height:2px;background:var(--red);margin-top:12px}
+.sub{font-size:13px;color:var(--ink2);margin-top:10px}
+.pane{padding:38px 48px 64px}
+.cap{font-size:10px;font-weight:600;letter-spacing:.22em;color:var(--muted)}
+.box{background:var(--panel);border:1px solid var(--line);padding:30px 32px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field input,.field select{background:transparent;border:none;border-bottom:1px solid var(--line2);
+  font-size:16px;padding:8px 0;border-radius:0;width:100%}
+.field select{appearance:none;-webkit-appearance:none;cursor:pointer}
+.field input:focus,.field select:focus{border-bottom-color:var(--red)}
+.btn-red{font-size:11px;letter-spacing:.22em;color:#fff;background:var(--red);padding:15px 30px;
+  font-weight:600;cursor:pointer;border:none;white-space:nowrap}
+.btn-red:hover{background:var(--red-dk)}
+.btn-back{font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--muted);cursor:pointer;background:none;border:none;padding:0}
+.btn-back:hover{color:var(--red)}
+.row-end{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:36px;flex-wrap:wrap}
+.deal-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px 40px}
 
-  /* ── Section labels ── */
-  .section-label { font-size: 10px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.28em; margin: 0 0 12px; display: flex; align-items: center; gap: 14px; }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+/* products */
+.head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.filters{display:flex;gap:26px;flex-wrap:wrap}
+.filt{font-size:11px;font-weight:600;letter-spacing:.18em;cursor:pointer;padding:0 0 6px;background:none;border:none;
+  color:var(--muted);border-bottom:2px solid transparent}
+.filt:hover{color:var(--red)}
+.filt.on{color:var(--ink);border-bottom-color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:28px}
+.card{background:var(--panel);padding:24px 26px 22px;position:relative;cursor:pointer}
+.card:hover{background:#fafafa}
+.card.sel{background:#fbf3f4;box-shadow:inset 3px 0 0 var(--red)}
+.chk{position:absolute;top:22px;right:22px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.chk.on{border-color:var(--red);background:var(--red)}
+.cattag{font-size:9.5px;font-weight:600;letter-spacing:.22em;color:var(--red)}
+.pname{font-size:16px;font-weight:600;margin-top:10px;line-height:1.3;padding-right:34px}
+.pdesc{font-size:12.5px;color:var(--ink2);margin-top:6px;line-height:1.5;min-height:38px}
+.pricerow{display:flex;align-items:baseline;gap:3px;margin-top:12px}
+.dollar{font-size:14px;color:var(--muted)}
+.pinput{font-size:24px;font-weight:500;background:transparent;border:none;border-bottom:1px solid transparent;
+  padding:0;width:110px;font-variant-numeric:tabular-nums}
+.pinput:hover{border-bottom-color:var(--line2)}
+.pinput:focus{border-bottom-color:var(--red)}
+.warr{font-size:9px;letter-spacing:.14em;color:var(--muted);margin-top:5px;text-transform:uppercase}
+.chips{display:flex;gap:5px;margin-top:12px;flex-wrap:wrap}
+.chip{font-size:9px;font-weight:600;letter-spacing:.14em;padding:5px 9px;cursor:pointer;background:none;
+  border:1px solid var(--line2);color:var(--muted)}
+.chip:hover{border-color:var(--red);color:var(--red)}
+.chip.on{border-color:var(--red);background:var(--red);color:#fff}
 
-  /* ── Vehicle select ── */
-  .vehicle-select-wrap { margin-bottom: 1.25rem; position: relative; }
-  .vehicle-select-wrap::after { content: ''; position: absolute; right: 20px; top: 50%; width: 8px; height: 8px; border-right: 1.5px solid var(--gold); border-bottom: 1.5px solid var(--gold); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
-  .vehicle-select-wrap select { font-family: var(--serif); font-size: 24px; font-weight: 500; padding: 16px 48px 16px 20px; border-radius: 4px; border: 1px solid var(--gold-line); background: var(--surface); color: var(--text); width: 100%; cursor: pointer; -webkit-appearance: none; appearance: none; transition: border-color 0.2s, box-shadow 0.2s; }
-  .vehicle-select-wrap select:hover { border-color: var(--gold); }
-  .vehicle-select-wrap select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
-  .vehicle-select-wrap option { font-family: var(--sans); font-size: 15px; background: var(--surface); color: var(--text); }
-  .product-count-badge { font-size: 12px; color: var(--text-2); margin-bottom: 1.5rem; letter-spacing: 0.04em; }
-  .product-count-badge:empty { margin-bottom: 0.5rem; }
+/* custom rows */
+.custom-hd{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;
+  border-bottom:2px solid var(--ink);padding-bottom:10px;margin-top:36px}
+.hint{font-size:10px;letter-spacing:.14em;color:var(--muted)}
+.crow{display:flex;align-items:center;gap:18px;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cbox{width:22px;height:22px;border-radius:50%;flex:none;cursor:pointer;border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.cbox.on{border-color:var(--red);background:var(--red)}
+.cname{flex:1;min-width:160px;background:transparent;border:none;border-bottom:1px solid var(--line2);font-size:14px;padding:7px 0}
+.cname:focus{border-bottom-color:var(--red)}
+.cprice{width:96px;background:transparent;border:none;border-bottom:1px solid var(--line2);
+  font-size:20px;font-weight:500;padding:2px 0;text-align:right;font-variant-numeric:tabular-nums}
+.cprice:focus{border-bottom-color:var(--red)}
+.crow .chips{margin-top:0}
 
-  /* ── Product rows ── */
-  .products-grid { display: flex; flex-direction: column; gap: 0; margin-bottom: 1.5rem; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); overflow: hidden; }
-  .products-grid:empty { display: none; }
-  .product-row, .other-row { position: relative; padding: 18px 22px; display: flex; align-items: center; gap: 18px; cursor: pointer; border-bottom: 1px solid var(--line); transition: background 0.18s; }
-  .product-row:hover, .other-row:hover { background: var(--surface-2); }
-  .other-row { border-bottom: none; background: repeating-linear-gradient(135deg, transparent 0 10px, rgba(0,0,0,0.018) 10px 20px); }
-  .product-row::before, .other-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--gold); transform: scaleY(0); transition: transform 0.2s; }
-  .product-row.selected, .other-row.selected { background: var(--gold-soft); }
-  .product-row.selected::before, .other-row.selected::before { transform: scaleY(1); }
-  .product-row.dragging, .other-row.dragging { opacity: 0.45; }
-  .check-box { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line-strong); background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.18s; }
-  .product-row:hover .check-box, .other-row:hover .check-box { border-color: var(--gold); }
-  .product-row.selected .check-box, .other-row.selected .check-box { background: var(--gold); border-color: var(--gold); }
-  .check-mark { display: none; color: #fff; font-size: 12px; font-weight: 700; }
-  .product-row.selected .check-mark, .other-row.selected .check-mark { display: block; }
-  .product-info { flex: 1; min-width: 0; }
-  .product-name { font-family: var(--serif); font-size: 21px; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.2; }
-  .product-desc { font-size: 13px; font-weight: 300; color: var(--text-2); line-height: 1.5; }
-  .other-name-input { font-family: var(--serif); font-size: 21px; font-weight: 500; background: transparent; border: none; border-bottom: 1px solid var(--line-strong); color: var(--text); width: 100%; padding: 2px 0; }
-  .other-name-input:focus { outline: none; border-bottom-color: var(--gold); }
-  .other-desc-input { font-size: 13px; font-weight: 300; background: transparent; border: none; border-bottom: 1px solid var(--line); color: var(--text-2); width: 100%; padding: 3px 0; margin-top: 8px; }
-  .other-desc-input:focus { outline: none; border-bottom-color: var(--gold); }
-  .product-pricing { text-align: right; flex-shrink: 0; }
-  .price-input-wrap { display: flex; align-items: baseline; gap: 3px; justify-content: flex-end; margin-bottom: 2px; }
-  .price-symbol { font-family: var(--serif); font-size: 16px; color: var(--gold); }
-  .price-input { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--text); background: transparent; border: none; border-bottom: 1px solid transparent; text-align: right; width: 78px; padding: 0; font-variant-numeric: lining-nums tabular-nums; transition: border-color 0.15s; }
-  .price-input:hover { border-bottom-color: var(--line-strong); }
-  .price-input:focus { outline: none; border-bottom-color: var(--gold); }
-  .price-note { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+/* packages */
+.pkgs{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:34px;align-items:start}
+.pkg{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--ink);cursor:pointer;position:relative;transition:box-shadow .15s}
+.pkg:hover{box-shadow:0 14px 30px -20px rgba(0,0,0,.5)}
+.pkg.pop{border-top-color:var(--red)}
+.pkg.on{border-color:var(--red);box-shadow:0 0 0 1px var(--red),0 16px 34px -20px rgba(157,26,47,.6);background:#fdf8f8}
+.pkg-hd{display:flex;align-items:center;gap:10px;padding:20px 22px 0}
+.pkg-name{font-size:13px;font-weight:600;letter-spacing:.2em}
+.pkg-badge{font-size:8.5px;letter-spacing:.2em;color:#fff;background:var(--red);padding:4px 8px;font-weight:600}
+.pkg-price{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:10px 22px 0;flex-wrap:wrap}
+.pkg-inp{font-size:30px;font-weight:300;background:transparent;border:none;border-bottom:1px solid transparent;
+  padding:0;width:120px;font-variant-numeric:tabular-nums}
+.pkg-inp:hover{border-bottom-color:var(--line2)}
+.pkg-inp:focus{border-bottom-color:var(--red)}
+.strike{font-size:13px;color:var(--muted);text-decoration:line-through;font-variant-numeric:tabular-nums}
+.save{font-size:9px;font-weight:600;letter-spacing:.16em;color:var(--green);border:1px solid var(--green);padding:3px 7px}
+.permo{font-size:13px;font-weight:600;color:var(--red);font-variant-numeric:tabular-nums}
+.pkg-pick{font-size:9px;font-weight:600;letter-spacing:.18em;padding:8px 0 0 22px;color:var(--faint)}
+.pkg-pick.on{color:var(--red)}
+.pkg-rule{border-bottom:1px solid var(--line);margin:14px 22px 0}
+.pkg-body{padding:8px 22px 20px}
+.pkg-none{font-size:12px;color:var(--faint);padding:12px 0 4px}
+.pkg-row{display:flex;align-items:baseline;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.pkg-row .nm{font-size:12.5px;font-weight:500;line-height:1.3}
+.leader{flex:1;min-width:12px;border-bottom:1px dotted var(--line2);position:relative;top:-3px}
+.pkg-row .pr{font-size:12px;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.note{margin-top:18px;font-size:12px;color:var(--muted);max-width:820px}
+.empty{margin-top:34px;padding:44px 24px;border:1px dashed var(--line2);text-align:center;font-size:13px;color:var(--ink2);background:var(--panel)}
 
-  /* ── Tier pills ── */
-  .tier-pills { display: flex; gap: 4px; justify-content: flex-end; margin-top: 10px; }
-  .tier-pill { font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 7px; min-width: 38px; border: 1px solid var(--line-strong); background: transparent; color: var(--muted); cursor: pointer; border-radius: 2px; transition: all 0.15s ease; text-align: center; }
-  .tier-pill:hover { border-color: var(--gold); color: var(--gold); }
-  .tier-pill.active { background: var(--gold); border-color: var(--gold); color: #fff; }
+/* summary */
+.sum-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:44px;margin-top:34px;align-items:start}
+.meta{display:flex;flex-wrap:wrap;gap:18px 30px;padding-bottom:18px;border-bottom:2px solid var(--ink)}
+.meta .k{font-size:9.5px;font-weight:600;letter-spacing:.2em;color:var(--muted)}
+.meta .v{font-size:13.5px;margin-top:5px}
+.sline{display:flex;gap:10px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line)}
+.sline .nm{font-size:14.5px;font-weight:500}
+.sline .pr{font-size:14.5px;font-variant-numeric:tabular-nums}
+.tot-box{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--ink);padding:24px 26px 0}
+.tot-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--ink2);padding:6px 0;font-variant-numeric:tabular-nums}
+.tot-row.disc{color:var(--green)}
+.tot-final{display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(135deg,#1a1a1a,#000);color:#fff;
+  border-left:4px solid var(--red);margin:16px -26px 0;padding:18px 26px}
+.tot-final .k{font-size:10px;font-weight:600;letter-spacing:.24em}
+.tot-final .v{font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
+.tot-mo{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin:0 -26px;padding:14px 26px;color:var(--ink2)}
+.tot-mo b{color:var(--red);font-size:16px;font-weight:600}
+.fineprint{font-size:11.5px;line-height:1.7;color:var(--muted);margin-top:20px}
 
-  /* ── Package builder ── */
-  .bundle-builder-card[hidden] { display: none; }
-  .bundle-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 22px 0 1.25rem; }
-  .bundle-column { background: var(--surface-2); border-radius: 4px; padding: 22px 16px 14px; min-height: 240px; border: 1px solid var(--line); transition: all 0.2s ease; position: relative; display: flex; flex-direction: column; }
-  .bundle-column.recommended { border-color: var(--gold); background: linear-gradient(180deg, rgba(157,26,47,0.10), var(--surface) 45%); box-shadow: 0 18px 36px -22px rgba(157,26,47,0.55); }
-  .bundle-column.recommended::after { content: 'Most Popular'; position: absolute; top: 0; left: 50%; transform: translate(-50%,-50%); background: var(--gold); color: #fff; font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; padding: 5px 12px; border-radius: 2px; white-space: nowrap; z-index: 2; }
-  .bundle-column.drag-over { border-color: var(--gold); background: var(--gold-soft); }
-  .bundle-header { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
-  .bundle-tier-name { font-family: var(--serif); font-size: 26px; font-weight: 500; color: var(--text); cursor: pointer; padding: 0 4px; margin-left: -4px; border-radius: 2px; border: 1px solid transparent; transition: all 0.15s; line-height: 1.15; }
-  .bundle-tier-name:hover { border-color: var(--line-strong); }
-  .bundle-tier-input { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--text); background: var(--bg); border: 1px solid var(--gold); border-radius: 2px; padding: 0 4px; width: 100%; min-width: 0; }
-  .bundle-tier-input:focus { outline: none; }
-  .bundle-clear-btn { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; margin-left: auto; }
-  .bundle-clear-btn:hover { color: var(--gold); }
-  .bundle-tagline-input { font-family: var(--serif); font-size: 15px; font-style: italic; color: var(--text-2); background: transparent; border: none; border-bottom: 1px solid transparent; padding: 3px 0 5px; width: 100%; margin-bottom: 12px; }
-  .bundle-tagline-input:focus { outline: none; border-bottom-color: var(--gold-line); }
-  .bundle-items { display: flex; flex-direction: column; gap: 6px; min-height: 110px; flex: 1; }
-  .bundle-item { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 2px; padding: 8px 28px 8px 11px; cursor: move; user-select: none; transition: border-color 0.15s; }
-  .bundle-item:hover { border-color: var(--line-strong); }
-  .bundle-item.dragging { opacity: 0.4; }
-  .bundle-item-name { font-size: 12.5px; font-weight: 500; color: var(--text); margin-bottom: 2px; line-height: 1.3; }
-  .bundle-item-price { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .bundle-item-remove { position: absolute; top: 50%; right: 4px; transform: translateY(-50%); width: 22px; height: 22px; border: none; background: transparent; color: var(--muted); cursor: pointer; font-size: 17px; line-height: 1; display: flex; align-items: center; justify-content: center; border-radius: 2px; transition: all 0.15s; padding: 0; }
-  .bundle-item-remove:hover { color: var(--accent); background: var(--accent-soft); }
-  .bundle-drop-zone { flex: 1; border: 1px dashed var(--line-strong); border-radius: 2px; padding: 14px 8px; display: flex; align-items: center; justify-content: center; color: var(--faint); font-size: 11px; letter-spacing: 0.06em; text-align: center; transition: all 0.2s; }
-  .bundle-drop-zone.drag-active { border-color: var(--gold); background: var(--gold-soft); color: var(--gold); }
-  .bundle-controls-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  .bundle-discount-wrap { display: flex; align-items: center; gap: 6px; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.16em; font-weight: 600; }
-  .bundle-discount-input { font-size: 13px; font-weight: 500; background: var(--bg); border: 1px solid var(--line-strong); border-radius: 2px; width: 72px; text-align: right; color: var(--text); padding: 5px 7px; font-variant-numeric: tabular-nums; }
-  .bundle-discount-input:focus { outline: none; border-color: var(--gold); }
-  .bundle-recommend-toggle { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); background: transparent; border: 1px solid var(--line-strong); border-radius: 2px; padding: 6px 8px; cursor: pointer; font-weight: 600; transition: all 0.15s; }
-  .bundle-recommend-toggle:hover { border-color: var(--gold); color: var(--gold); }
-  .bundle-recommend-toggle.active { background: transparent; border-color: var(--gold); color: var(--gold); }
-  .bundle-summary { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
-  .bundle-empty-note { font-family: var(--serif); font-size: 14px; color: var(--faint); font-style: italic; text-align: center; padding: 4px 0; }
-  .bundle-sum-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 11.5px; color: var(--text-2); padding: 3px 0; }
-  .bundle-sum-row span:last-child { font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; font-weight: 500; }
-  .bundle-sum-row.discount, .bundle-sum-row.discount span:last-child { color: var(--green); }
-  .bundle-sum-row.total { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 10px; font-size: 9px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.18em; }
-  .bundle-sum-row.total span:last-child { font-family: var(--serif); font-size: 24px; color: var(--text); font-weight: 500; letter-spacing: 0; text-transform: none; font-variant-numeric: lining-nums tabular-nums; }
-  .bundle-monthly { text-align: center; padding-top: 10px; margin-top: 8px; border-top: 1px solid var(--line); font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--gold); font-variant-numeric: lining-nums; }
-  .bundle-monthly small { display: block; font-family: var(--sans); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.14em; margin-top: 3px; font-weight: 500; }
-  .bundle-totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding-top: 1.25rem; border-top: 1px solid var(--line); }
-  .bundle-total-card { background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 14px 10px 12px; text-align: center; position: relative; }
-  .bundle-total-card.recommended { background: var(--gold-soft); border-color: var(--gold-line); }
-  .bundle-total-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.22em; margin-bottom: 6px; font-weight: 500; }
-  .bundle-total-card.recommended .bundle-total-label { color: var(--gold); }
-  .bundle-total-price { font-family: var(--serif); font-size: 26px; font-weight: 500; color: var(--text); font-variant-numeric: lining-nums tabular-nums; line-height: 1.1; }
-  .bundle-total-savings { font-size: 9px; color: var(--green); font-weight: 600; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.16em; }
+/* finance drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:360px;max-width:100%;background:var(--panel);
+  border-left:3px solid var(--red);z-index:41;padding:32px;overflow-y:auto;box-shadow:-20px 0 50px -20px rgba(0,0,0,.5)}
+.drawer h3{font-size:18px;font-weight:300;letter-spacing:.14em;text-transform:uppercase;margin:0}
+.x{font-size:22px;color:var(--muted);cursor:pointer;padding:0 8px;background:none;border:none}
+.x:hover{color:var(--ink)}
+.stepper{display:flex;align-items:center;gap:14px}
+.sbtn{width:36px;height:36px;flex:none;border:1px solid var(--line2);background:none;color:var(--ink);
+  display:flex;align-items:center;justify-content:center;font-size:19px;cursor:pointer}
+.sbtn:hover{border-color:var(--red);color:var(--red)}
+.taxinp{flex:1;min-width:0;background:transparent;border:none;border-bottom:1px solid var(--line2);
+  font-size:16px;padding:8px 0;text-align:center;font-variant-numeric:tabular-nums}
+.taxinp:focus{border-bottom-color:var(--red)}
+.termchip{font-size:10px;font-weight:600;letter-spacing:.12em;padding:8px 11px;cursor:pointer;background:none;
+  border:1px solid var(--line2);color:var(--muted)}
+.termchip:hover{border-color:var(--red);color:var(--red)}
+.termchip.on{border-color:var(--red);background:var(--red);color:#fff}
+.cashrow{display:flex;align-items:center;gap:12px;cursor:pointer;margin-top:4px}
+.cashbox{width:20px;height:20px;border-radius:50%;flex:none;border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.cashbox.on{border-color:var(--red);background:var(--red)}
 
-  /* ── Deal summary ── */
-  .cash-toggle-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 4px; border: 1px solid var(--line); background: var(--surface-2); margin: 18px 0 14px; cursor: pointer; user-select: none; transition: all 0.18s; }
-  .cash-toggle-row:hover { border-color: var(--line-strong); }
-  .cash-toggle-row.active { border-color: var(--green); background: var(--green-soft); }
-  .toggle-box { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line-strong); background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .cash-toggle-row.active .toggle-box { background: var(--green); border-color: var(--green); }
-  .toggle-check { display: none; color: #fff; font-size: 12px; font-weight: 700; }
-  .cash-toggle-row.active .toggle-check { display: block; }
-  .toggle-label { font-size: 14px; font-weight: 500; color: var(--text); }
-  .toggle-sub { font-size: 12px; color: var(--muted); margin-left: auto; text-align: right; }
-  .controls-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 18px; }
-  .ctrl-label { font-size: 10px; color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; }
-  .ctrl-select, .ctrl-input { font-size: 14px; padding: 7px 10px; border-radius: 2px; border: 1px solid var(--line-strong); background: var(--bg); color: var(--text); margin-right: 10px; }
-  .ctrl-select:focus, .ctrl-input:focus { outline: none; border-color: var(--gold); }
-  .ctrl-input { width: 80px; }
-  .totals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-bottom: 1.25rem; border: 1px solid var(--line); border-radius: 4px; }
-  .stat-card { padding: 18px 20px; border-right: 1px solid var(--line); transition: opacity 0.2s; }
-  .stat-card:last-child { border-right: none; }
-  .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.22em; margin-bottom: 6px; }
-  .stat-value { font-family: var(--serif); font-size: 34px; font-weight: 500; color: var(--text); line-height: 1.1; font-variant-numeric: lining-nums; }
-  #monthly-card .stat-value { color: var(--gold); }
-  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-  .tax-block { margin-bottom: 1.5rem; }
-  .tax-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); padding: 5px 0; font-variant-numeric: tabular-nums; }
-  .tax-total-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); padding: 12px 0 4px; border-top: 1px solid var(--line-strong); margin-top: 6px; }
-  .tax-total-row span:last-child { font-family: var(--serif); font-size: 28px; font-weight: 500; letter-spacing: 0; color: var(--text); font-variant-numeric: lining-nums tabular-nums; }
-  .selected-list { font-size: 13px; font-weight: 300; color: var(--text-2); min-height: 18px; margin-top: 4px; line-height: 1.7; }
+@media (max-width:980px){
+  .wrap{padding:0 24px} .pane{padding:30px 24px 56px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .pkgs{grid-template-columns:1fr;max-width:560px}
+  .sum-grid{grid-template-columns:1fr;gap:28px}
+  .deal-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+  .wrap{padding:0 16px} .pane{padding:24px 16px 48px}
+  .logo{width:44px;height:44px} .brand{gap:12px} .brand-name{font-size:18px} .brand-sub{display:none}
+  .hdr{padding:16px 0} .hdr-right{gap:10px;width:100%;justify-content:space-between}
+  .total-big{font-size:24px;text-align:left} .total-cap{text-align:left}
+  .btn-ghost{padding:9px 10px;letter-spacing:.14em}
+  .steps{gap:18px} .step{letter-spacing:.12em;font-size:10.5px} .veh-line{display:none}
+  .grid{grid-template-columns:1fr} .deal-grid{grid-template-columns:1fr} .box{padding:22px 18px}
+  h2.title{font-size:20px} .btn-red{padding:14px 18px;letter-spacing:.16em}
+}
 
-  /* ── Signatures ── */
-  .ack-text { font-family: var(--serif); font-size: 17px; color: var(--text-2); margin-top: 10px; line-height: 1.55; }
-  .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
-  .sig-pad-wrap { display: flex; flex-direction: column; gap: 8px; }
-  .sig-pad-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.22em; }
-  .sig-canvas-container { position: relative; border: 1px solid var(--gold-line); border-radius: 2px; background: var(--paper); overflow: hidden; }
-  .sig-canvas-container::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: 22px; height: 1px; background: rgba(0,0,0,0.18); pointer-events: none; }
-  .sig-canvas { display: block; width: 100%; height: 90px; cursor: crosshair; touch-action: none; position: relative; z-index: 1; }
-  .sig-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: var(--serif); font-style: italic; font-size: 15px; color: #b0b0b0; pointer-events: none; white-space: nowrap; }
-  .sig-clear-btn { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; align-self: flex-end; }
-  .sig-clear-btn:hover { color: var(--gold); }
-  .disclaimer { font-size: 11px; font-weight: 300; color: var(--muted); line-height: 1.7; margin-top: 1.5rem; border-top: 1px solid var(--line); padding-top: 1.25rem; }
-
-  /* ── Buttons ── */
-  .btn-row { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
-  .btn { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; padding: 14px 28px; border-radius: 2px; border: 1px solid var(--line-strong); background: transparent; color: var(--text); cursor: pointer; transition: all 0.18s; }
-  .btn:hover { border-color: var(--text); }
-  .btn.primary { background: var(--gold); color: #fff; border-color: var(--gold); }
-  .btn.primary:hover { background: #7a0f22; border-color: #7a0f22; }
-
-
-  /* ── Mazda theme: black / white / Soul Red, clean sans ── */
-  .header-card { padding: 0; border: none; box-shadow: 0 1px 0 var(--line), 0 10px 30px -18px rgba(0,0,0,0.35); }
-  .header-card::before { display: none; }
-  .header-top { background: #101010; padding: 26px 28px; margin: 0; border-bottom: 3px solid var(--gold); align-items: center; }
-  .brand { display: flex; align-items: center; gap: 20px; min-width: 0; }
-  .mazda-logo { width: 64px; height: 64px; flex-shrink: 0; fill: #e4e4e4; }
-  .dealership-name { font-size: 28px; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; color: #fff; }
-  .dealership-name:focus { border-bottom-color: #fff; }
-  .header-sub { color: #b4b4b4; margin-top: 8px; }
-  .tag { color: #fff; border-color: rgba(255,255,255,0.4); }
-  .deal-fields { padding: 24px 28px 28px; }
-  .section-label { color: var(--text); font-weight: 600; }
-  .section-label::before { content: ''; width: 18px; height: 2px; background: var(--gold); }
-  .vehicle-select-wrap select { font-size: 18px; font-weight: 500; letter-spacing: 0.02em; border-color: var(--line-strong); }
-  .vehicle-select-wrap::after { border-color: var(--text); }
-  .product-name, .other-name-input { font-size: 16px; font-weight: 600; letter-spacing: 0.01em; }
-  .price-symbol { font-size: 13px; color: var(--muted); }
-  .price-input { font-size: 20px; font-weight: 500; }
-  .bundle-tier-name, .bundle-tier-input { font-size: 18px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-  .bundle-tagline-input { font-size: 12.5px; }
-  .bundle-empty-note { font-size: 12px; }
-  .bundle-sum-row.total span:last-child { font-size: 20px; font-weight: 600; }
-  .bundle-monthly { font-size: 16px; font-weight: 600; }
-  .bundle-total-price { font-size: 22px; font-weight: 600; }
-  .stat-value { font-size: 30px; font-weight: 300; letter-spacing: -0.01em; }
-  #monthly-card .stat-value { font-weight: 500; }
-  .tax-total-row { color: var(--text); }
-  .tax-total-row span:last-child { font-size: 24px; font-weight: 600; color: var(--gold); }
-  .ack-text { font-size: 13.5px; line-height: 1.65; }
-  .sig-placeholder { font-size: 12px; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
-  .sig-canvas-container { border-color: var(--line-strong); }
-  .btn { border-radius: 0; }
-
-  @media (max-width: 640px) {
-    body { padding: 1rem 0.75rem 3rem; }
-    .totals-card, .sig-card, .bundle-builder-card { padding: 1.25rem; }
-    .header-top { padding: 20px 18px; } .deal-fields { padding: 20px 18px 22px; }
-    .mazda-logo { width: 48px; height: 48px; } .brand { gap: 14px; }
-    .dealership-name { font-size: 20px; }
-    .tag { display: none; }
-    .vehicle-select-wrap select { font-size: 16px; }
-    .product-row, .other-row { padding: 16px 14px; gap: 12px; }
-    .totals-grid { grid-template-columns: 1fr 1fr; }
-    .stat-card:nth-child(2) { border-right: none; }
-    .stat-card:nth-child(3) { grid-column: 1 / -1; border-top: 1px solid var(--line); }
-    .stat-value { font-size: 24px; }
-    .sig-row { grid-template-columns: 1fr; }
-    .bundle-container { grid-template-columns: 1fr; gap: 22px; }
-    .bundle-totals { grid-template-columns: 1fr; }
-    .toggle-sub { display: none; }
-  }
-
-  @media print {
-    :root {
-      --bg: #fff; --surface: #fff; --surface-2: #fff; --surface-3: #fff;
-      --line: rgba(0,0,0,0.12); --line-strong: rgba(0,0,0,0.3);
-      --text: #111; --text-2: #444; --muted: #666; --faint: #999;
-      --gold: #910a2d; --gold-soft: rgba(145,10,45,0.06); --gold-line: rgba(145,10,45,0.45);
-      --paper: #fff;
-    }
-    body { background: #fff; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .btn-row, .no-print, .bundle-builder-card, .sig-clear-btn, .tier-pills, .vehicle-select-wrap, .sig-placeholder { display: none !important; }
-    .header-card, .totals-card, .sig-card { padding: 1rem 0; border: none; border-bottom: 1px solid var(--line); border-radius: 0; margin-bottom: 0.75rem; }
-    .header-card { box-shadow: none; padding: 0 0 1rem; }
-    .header-top { background: #fff; padding: 0 0 14px; border-bottom: 2px solid var(--gold); }
-    .mazda-logo { fill: #101010; width: 54px; height: 54px; }
-    .dealership-name { font-size: 22px; color: #101010; }
-    .header-sub { color: #555; } .tag { color: #101010; border-color: rgba(0,0,0,0.4); }
-    .deal-fields { padding: 16px 0 0; }
-    .product-row, .other-row { page-break-inside: avoid; padding: 9px 12px; }
-    .product-name { font-size: 13.5px; } .product-desc { font-size: 11px; }
-    .price-input { font-size: 16px; }
-    .totals-card, .sig-card { page-break-inside: avoid; }
-    .product-row.selected .check-mark, .other-row.selected .check-mark { color: #fff; }
-  }
+/* print */
+#print-sheet{display:none}
+@media print{
+  html,body{background:#fff}
+  .shell,.scrim,.drawer{display:none !important}
+  #print-sheet{display:block !important;background:#fff;color:#101010;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@page{size:letter;margin:.45in}
+.p-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 0 14px;border-bottom:3px solid #910a2d}
+.p-brand{display:flex;align-items:center;gap:14px}
+.p-logo{width:50px;height:50px;fill:#101010}
+.p-name{font-size:21px;font-weight:300;letter-spacing:.14em;text-transform:uppercase}
+.p-tag{font-size:9.5px;font-weight:600;letter-spacing:.24em;border:1px solid #101010;padding:7px 12px}
+.p-meta{display:flex;justify-content:space-between;gap:24px;padding:22px 0 0;flex-wrap:wrap}
+.p-meta .k{font-size:9px;font-weight:600;letter-spacing:.2em;color:#767676}
+.p-meta .v{font-size:13px;margin-top:4px}
+.p-sec{font-size:10px;font-weight:600;letter-spacing:.24em;border-bottom:2px solid #101010;padding-bottom:8px}
+.p-line{display:flex;gap:10px;align-items:baseline;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.12);page-break-inside:avoid}
+.p-leader{flex:1;border-bottom:1px dotted rgba(0,0,0,.4);position:relative;top:-3px}
+.p-tot{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;font-variant-numeric:tabular-nums}
+.p-total{display:flex;justify-content:space-between;align-items:baseline;border:1.5px solid #101010;border-left:4px solid #910a2d;margin-top:8px;padding:10px 14px}
+.p-ack{page-break-inside:avoid}
+.p-sign{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:46px}
+.p-rule{border-bottom:1px solid #101010;height:34px}
+.p-cap{font-size:9.5px;font-weight:600;letter-spacing:.2em;color:#767676;margin-top:8px}
 </style>
 </head>
 <body>
-<div class="menu-wrap">
-  <div class="header-card">
-    <div class="header-top">
-      <div class="brand">
-        <svg class="mazda-logo" viewBox="0 0 24 24" role="img" aria-label="Mazda"><path d="M11.999 12.876c-.036 0-.105-.046-.222-.26a7.531 7.531 0 00-1.975-2.353A8.255 8.255 0 007.7 9.065a17.945 17.945 0 00-.345-.136c-1.012-.4-2.061-.813-3.035-1.377A8.982 8.982 0 014 7.362c.194-.34.42-.665.67-.962a6.055 6.055 0 011.253-1.131 7.126 7.126 0 011.618-.806c1.218-.434 2.677-.647 4.458-.649 1.783.002 3.241.215 4.459.65a7.097 7.097 0 011.619.805c.471.319.892.699 1.253 1.13.25.298.475.623.67.963-.103.064-.212.129-.32.192-.976.564-2.023.977-3.037 1.376l-.345.136a8.26 8.26 0 00-2.1 1.198 7.519 7.519 0 00-1.975 2.354c-.117.213-.187.259-.224.259m0 7.072c-1.544-.002-2.798-.129-3.83-.387-1.013-.252-1.855-.64-2.576-1.188a5.792 5.792 0 01-1.392-1.537 7.607 7.607 0 01-.81-1.768 10.298 10.298 0 01-.467-2.983c0-.674.047-1.313.135-1.901 1.106.596 2.153.895 3.08 1.16l.215.06c1.29.371 2.314.857 3.135 1.488.475.368.89.793 1.23 1.264.369.508.663 1.088.877 1.725.096.289.2.468.403.468.207 0 .308-.18.405-.468a6.124 6.124 0 012.107-2.988c.82-.632 1.845-1.118 3.135-1.489l.216-.06c.926-.265 1.973-.564 3.078-1.16.09.589.136 1.227.136 1.9 0 .458-.046 1.664-.465 2.984a7.626 7.626 0 01-.809 1.768 5.789 5.789 0 01-1.396 1.537c-.723.548-1.565.936-2.574 1.188-1.035.258-2.288.385-3.833.387m9.692-14.556c-1.909-2.05-4.99-2.99-9.692-2.995-4.7.005-7.781.944-9.69 2.994C.89 6.913 0 9.018 0 11.874c0 1.579.39 5.6 3.564 7.676 1.9 1.242 4.354 2.046 8.435 2.052 4.083-.006 6.536-.81 8.437-2.052C23.609 17.474 24 13.452 24 11.874c0-2.848-.897-4.968-2.31-6.483Z"/></svg>
-        <div>
-          <div class="dealership-name" contenteditable="true">Jenkins Mazda</div>
-          <div class="header-sub">Genuine Mazda Accessories Menu</div>
-        </div>
-      </div>
-      <div class="tag">Accessory Menu</div>
-    </div>
-    <div class="deal-fields">
-      <div class="field-group"><div class="field-label">Customer Name</div><input type="text" placeholder="Full name"></div>
-      <div class="field-group"><div class="field-label">Vehicle</div><input type="text" placeholder="Year / Make / Model" id="f-vehicle"></div>
-      <div class="field-group"><div class="field-label">Stock #</div><input type="text" placeholder="Stock number"></div>
-      <div class="field-group"><div class="field-label">Date</div><input type="date" id="f-date"></div>
-    </div>
-  </div>
-  <div class="section-label no-print">Select Vehicle Model</div>
-  <div class="vehicle-select-wrap">
-    <select id="vehicle-select">
-      <option value="">— Choose a Mazda model —</option>
-    </select>
-  </div>
-  <div class="product-count-badge" id="product-count-badge"></div>
-  <div class="section-label">Select protection packages</div>
-  <div class="products-grid" id="products-grid"></div>
 
-  <div class="bundle-builder-card no-print" id="bundle-builder" hidden>
-    <div class="section-label">Build package bundles</div>
-    <div class="bundle-container" id="bundle-container"></div>
-    <div class="bundle-totals" id="bundle-totals"></div>
-  </div>
+<div class="shell" id="app"></div>
+<div id="drawer-host"></div>
+<div id="print-sheet"></div>
 
-  <div class="totals-card">
-    <div class="section-label">Deal summary</div>
-    <div class="cash-toggle-row no-print" id="cash-toggle">
-      <div class="toggle-box"><div class="toggle-check">&#10003;</div></div>
-      <div class="toggle-label">Cash / No financing</div>
-      <div class="toggle-sub" id="cash-sub">Toggle to hide monthly payment</div>
-    </div>
-    <div class="controls-row no-print" id="finance-controls">
-      <span class="ctrl-label">Finance term</span>
-      <select class="ctrl-select" id="term-select">
-        <option value="24">24 months</option>
-        <option value="36">36 months</option>
-        <option value="48">48 months</option>
-        <option value="60" selected>60 months</option>
-        <option value="72">72 months</option>
-        <option value="84">84 months</option>
-      </select>
-      <span class="ctrl-label">Rate (%)</span>
-      <input type="number" class="ctrl-input" id="rate-input" value="6.9" step="0.1" min="0" max="30">
-    </div>
-    <div class="totals-grid">
-      <div class="stat-card">
-        <div class="stat-label">Items selected</div>
-        <div class="stat-value" id="item-count">0</div>
-        <div class="stat-sub" id="item-total-sub">of 0 products</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Subtotal</div>
-        <div class="stat-value" id="total-price">$0</div>
-        <div class="stat-sub">before tax</div>
-      </div>
-      <div class="stat-card" id="monthly-card">
-        <div class="stat-label">Monthly bump</div>
-        <div class="stat-value" id="monthly-bump">$0/mo</div>
-        <div class="stat-sub" id="term-display">over 60 months</div>
-      </div>
-    </div>
-    <div class="tax-block">
-      <div class="tax-row"><span>Subtotal</span><span id="subtotal-line">$0.00</span></div>
-      <div class="tax-row"><span>Sales tax (7.5%)</span><span id="tax-line">$0.00</span></div>
-      <div class="tax-total-row"><span>Total with tax</span><span id="total-with-tax">$0.00</span></div>
-    </div>
-    <div class="section-label">Selected items</div>
-    <div class="selected-list" id="selected-list">No items selected</div>
-  </div>
-  <div class="sig-card">
-    <div class="section-label">Customer acknowledgment</div>
-    <p class="ack-text">I have been offered the above accessory protection products by the dealership. The items checked above have been selected and agreed to at the prices listed. I understand these are optional products and my decision is reflected below.</p>
-    <div class="sig-row">
-      <div class="sig-pad-wrap">
-        <div class="sig-pad-label">Customer signature</div>
-        <div class="sig-canvas-container">
-          <canvas class="sig-canvas" id="sig-customer"></canvas>
-          <div class="sig-placeholder" id="ph-customer">Sign here</div>
-        </div>
-        <button class="sig-clear-btn" onclick="clearSig('sig-customer','ph-customer')">Clear</button>
-      </div>
-      <div class="sig-pad-wrap">
-        <div class="sig-pad-label">Sales associate</div>
-        <div class="sig-canvas-container">
-          <canvas class="sig-canvas" id="sig-associate"></canvas>
-          <div class="sig-placeholder" id="ph-associate">Sign here</div>
-        </div>
-        <button class="sig-clear-btn" onclick="clearSig('sig-associate','ph-associate')">Clear</button>
-      </div>
-    </div>
-    <div class="disclaimer">All prices shown are pre-tax. A 7.5% sales tax is applied and reflected in the total. Monthly payment figures are estimates based on the finance term and rate shown above and are for reference only. Final payment amounts will be reflected in your financing contract. Genuine Mazda Accessories are backed by Mazda's warranty. Products and prices subject to change. See dealer for complete details.</div>
-  </div>
-  <div class="btn-row no-print">
-    <button class="btn" onclick="clearAll()">Clear all</button>
-    <button class="btn primary" onclick="window.print()">Print menu</button>
-  </div>
-</div>
 <script>
-const TAX = 0.075;
-// ══════════════════════════════════════════════════════════════
-// COMPLETE MAZDA ACCESSORY DATABASE — ALL 2026 MODELS
-// Sourced from mazdausa.com/vehicles/[model]/accessories
-// Prices are dealer-adjustable in the menu
-// ══════════════════════════════════════════════════════════════
+/* ============================ DATA ============================ */
+// Accessories per model. Prices are dealer-adjustable in the menu.
 const vehicleAccessories = {
   "2026 Mazda CX-90": [
     { id:'awfm90', name:'All-Weather Floor Mats', desc:'Custom-fitted mats that guard against snow, mud, sand and whatever else comes through the door. Set of 4.', price:175 },
@@ -644,525 +470,424 @@ const vehicleAccessories = {
     { id:'roadkit_mxr', name:'Roadside Assistance Kit', desc:'Essential emergency tools.', price:55 },
   ],
 };
-
-// Build the vehicle selector dropdown
-const vehicleSelect = document.getElementById('vehicle-select');
-Object.keys(vehicleAccessories).forEach(model => {
-  const opt = document.createElement('option');
-  opt.value = model;
-  opt.textContent = model;
-  vehicleSelect.appendChild(opt);
-});
-
-let currentProducts = [];
-const selected = new Set();
-let isCash = false;
-
-// ══════════════════════════════════════════════════════════════
-// Package bundle state — stored per vehicle model
-// ══════════════════════════════════════════════════════════════
-const defaultBundleNames = { 0: 'Essential', 1: 'Premium', 2: 'Deluxe' };
-const defaultBundleMeta = () => ({
-  0: { tagline: '', overridePrice: '', recommended: false },
-  1: { tagline: '', overridePrice: '', recommended: true },
-  2: { tagline: '', overridePrice: '', recommended: false }
-});
-const bundleStoreKey = 'mazda-accessory-bundle-store-v1';
-let bundleStore = {};
-try { bundleStore = JSON.parse(localStorage.getItem(bundleStoreKey) || '{}'); } catch(e) { bundleStore = {}; }
-const bundles = { 0: [], 1: [], 2: [] };
-const bundleNames = Object.assign({}, defaultBundleNames);
-let bundleMeta = defaultBundleMeta();
-let currentModel = '';
-
-function loadBundlesForModel(model) {
-  currentModel = model;
-  const data = bundleStore[model];
-  bundles[0] = []; bundles[1] = []; bundles[2] = [];
-  Object.assign(bundleNames, defaultBundleNames);
-  bundleMeta = defaultBundleMeta();
-  if (data) {
-    if (data.bundles) [0, 1, 2].forEach(i => { if (Array.isArray(data.bundles[i])) bundles[i] = data.bundles[i].slice(); });
-    if (data.names) Object.assign(bundleNames, data.names);
-    if (data.meta) [0, 1, 2].forEach(i => { if (data.meta[i]) Object.assign(bundleMeta[i], data.meta[i]); });
-  }
+const TIERS = [['ess','ESSENTIAL'],['pre','PREMIUM'],['dlx','DELUXE']];
+const TIER_NAMES = {ess:'Essential',pre:'Premium',dlx:'Deluxe'};
+const POPULAR = 'pre';
+const ALL_TIERS = {ess:true,pre:true,dlx:true};
+const STORE = 'Jenkins Mazda';
+const STORAGE_KEY = 'jenkins-mazda-menu-v1';
+const WARRANTY = 'Genuine Mazda Accessory';
+const CATS = [['ALL','ALL'],['INTERIOR','INTERIOR & CARGO'],['ROOF','ROOF & TOWING'],['EXTERIOR','EXTERIOR & STYLE']];
+const CAT_LABEL = {INTERIOR:'INTERIOR & CARGO',ROOF:'ROOF & TOWING',EXTERIOR:'EXTERIOR & STYLE',CUSTOM:'CUSTOM'};
+const LOGO_PATH = 'M11.999 12.876c-.036 0-.105-.046-.222-.26a7.531 7.531 0 00-1.975-2.353A8.255 8.255 0 007.7 9.065a17.945 17.945 0 00-.345-.136c-1.012-.4-2.061-.813-3.035-1.377A8.982 8.982 0 014 7.362c.194-.34.42-.665.67-.962a6.055 6.055 0 011.253-1.131 7.126 7.126 0 011.618-.806c1.218-.434 2.677-.647 4.458-.649 1.783.002 3.241.215 4.459.65a7.097 7.097 0 011.619.805c.471.319.892.699 1.253 1.13.25.298.475.623.67.963-.103.064-.212.129-.32.192-.976.564-2.023.977-3.037 1.376l-.345.136a8.26 8.26 0 00-2.1 1.198 7.519 7.519 0 00-1.975 2.354c-.117.213-.187.259-.224.259m0 7.072c-1.544-.002-2.798-.129-3.83-.387-1.013-.252-1.855-.64-2.576-1.188a5.792 5.792 0 01-1.392-1.537 7.607 7.607 0 01-.81-1.768 10.298 10.298 0 01-.467-2.983c0-.674.047-1.313.135-1.901 1.106.596 2.153.895 3.08 1.16l.215.06c1.29.371 2.314.857 3.135 1.488.475.368.89.793 1.23 1.264.369.508.663 1.088.877 1.725.096.289.2.468.403.468.207 0 .308-.18.405-.468a6.124 6.124 0 012.107-2.988c.82-.632 1.845-1.118 3.135-1.489l.216-.06c.926-.265 1.973-.564 3.078-1.16.09.589.136 1.227.136 1.9 0 .458-.046 1.664-.465 2.984a7.626 7.626 0 01-.809 1.768 5.789 5.789 0 01-1.396 1.537c-.723.548-1.565.936-2.574 1.188-1.035.258-2.288.385-3.833.387m9.692-14.556c-1.909-2.05-4.99-2.99-9.692-2.995-4.7.005-7.781.944-9.69 2.994C.89 6.913 0 9.018 0 11.874c0 1.579.39 5.6 3.564 7.676 1.9 1.242 4.354 2.046 8.435 2.052 4.083-.006 6.536-.81 8.437-2.052C23.609 17.474 24 13.452 24 11.874c0-2.848-.897-4.968-2.31-6.483Z';
+function logo(cls){ return '<svg class="'+cls+'" viewBox="0 0 24 24" role="img" aria-label="Mazda"><path d="'+LOGO_PATH+'"/></svg>'; }
+function catOf(name){
+  const n=name.toLowerCase();
+  if(/moonroof/.test(n)) return 'EXTERIOR';
+  if(/floor mat|cargo (tray|net|liner|cover)|cargo mat|pet |mirror|accent light|first aid|roadside/.test(n)) return 'INTERIOR';
+  if(/crossbar|roof|bike|ski|kayak|tent|tow|hitch|trailer/.test(n)) return 'ROOF';
+  return 'EXTERIOR';
 }
-function saveBundlesForModel() {
-  if (!currentModel) return;
-  bundleStore[currentModel] = {
-    bundles: { 0: bundles[0].slice(), 1: bundles[1].slice(), 2: bundles[2].slice() },
-    names: Object.assign({}, bundleNames),
-    meta: JSON.parse(JSON.stringify(bundleMeta))
+
+/* ============================ STATE ============================ */
+function today(){ return new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}); }
+function defaults(){
+  return {
+    step:0, filter:'ALL', showSettings:false,
+    cName:'', cModel:'', cStock:'', cVin:'', cDate:today(),
+    sel:{}, priceOv:{}, pkgOv:{}, chosenPkg:null,
+    custom:{c1:{name:'',price:''},c2:{name:'',price:''}},
+    taxRate:7.5, term:60, apr:6.9, cash:false
   };
-  try { localStorage.setItem(bundleStoreKey, JSON.stringify(bundleStore)); } catch(e) {}
 }
-
-function getProductName(id) {
-  if (id === 'other') return document.getElementById('other-name-input')?.value.trim() || 'Other';
-  const p = currentProducts.find(x => x.id === id);
-  return p ? p.name : '';
-}
-function getProductPrice(id) {
-  if (id === 'other') return parseFloat(document.getElementById('price-other')?.value) || 0;
-  return parseFloat(document.getElementById('price-' + id)?.value) || 0;
-}
-function calcBundleSubtotal(idx) {
-  let s = 0;
-  bundles[idx].forEach(id => { s += getProductPrice(id); });
+let S = (function(){
+  let saved=null;
+  try{ saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); }catch(e){}
+  const s = Object.assign(defaults(), saved||{});
+  if(s.cModel && !vehicleAccessories[s.cModel]) s.cModel='';
+  s.showSettings=false;
   return s;
+})();
+function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(S)); }catch(e){} }
+function set(patch){ Object.assign(S,patch); save(); render(); }
+
+/* ============================ HELPERS ============================ */
+function fmt0(n){ return '$'+Math.round(n).toLocaleString('en-US'); }
+function fmt2(n){ return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function num(v,fb){ const n=parseFloat(v); return isNaN(n)?fb:n; }
+function products(){
+  return (vehicleAccessories[S.cModel]||[]).map(function(p){ return Object.assign({cat:catOf(p.name)},p); });
 }
-function calcBundlePrice(idx) {
-  const sub = calcBundleSubtotal(idx);
-  const o = parseFloat(bundleMeta[idx].overridePrice);
-  if (!isNaN(o) && o >= 0 && bundleMeta[idx].overridePrice !== '') return o;
-  return sub;
-}
-function toggleBundleMembership(productId, idx) {
-  // independent per tier — same item can live in any combination of packages
-  const pos = bundles[idx].indexOf(productId);
-  if (pos >= 0) bundles[idx].splice(pos, 1);
-  else bundles[idx].push(productId);
-  saveBundlesForModel();
-  updateTotals();
-}
-function renderProductPills() {
-  document.querySelectorAll('.tier-pills').forEach(container => {
-    const productId = container.dataset.productId;
-    container.innerHTML = '';
-    [0, 1, 2].forEach(idx => {
-      const pill = document.createElement('button');
-      pill.type = 'button';
-      pill.className = 'tier-pill';
-      const initials = (bundleNames[idx] || '').trim().slice(0, 3).toUpperCase() || (idx + 1).toString();
-      pill.textContent = initials;
-      pill.title = 'Add to ' + (bundleNames[idx] || ('Tier ' + (idx + 1)));
-      if (bundles[idx].includes(productId)) pill.classList.add('active');
-      pill.onclick = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        toggleBundleMembership(productId, idx);
-      };
-      pill.onmousedown = (e) => e.stopPropagation();
-      container.appendChild(pill);
-    });
+function effPrice(p){ return S.priceOv[p.id]!=null ? (parseFloat(S.priceOv[p.id])||0) : p.price; }
+function customList(){
+  return ['c1','c2'].map(function(k){
+    const r=S.custom[k]||{name:'',price:''};
+    return {id:k,cat:'CUSTOM',name:r.name||'Custom Item',price:parseFloat(r.price)||0};
   });
 }
+function allItems(){ return products().map(function(p){return Object.assign({},p,{price:effPrice(p)});}).concat(customList()); }
+function tiersOf(id){ return (S.sel[id]&&S.sel[id].tiers)||ALL_TIERS; }
+function selectedItems(){ return allItems().filter(function(p){ return S.sel[p.id]&&S.sel[p.id].on; }); }
+function monthly(t){
+  if(t<=0) return 0;
+  const r=S.apr/100/12;
+  return r>0 ? t*r/(1-Math.pow(1+r,-S.term)) : t/S.term;
+}
+function showMonthly(){ return !S.cash; }
+function vehicle(){ return S.cModel||''; }
 
-function fmt(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-function calcMonthly(total, months, rate) {
-  if (!rate) return total / months;
-  const r = rate / 100 / 12;
-  return total * r / (1 - Math.pow(1 + r, -months));
+/* ============================ ACTIONS ============================ */
+function go(step){ set({step:step}); window.scrollTo(0,0); }
+function setFilter(f){ set({filter:f}); }
+function setModel(m){
+  if(m===S.cModel) return;
+  // accessories differ per model, so a new model starts with a clean selection
+  const sel={};
+  ['c1','c2'].forEach(function(k){ if(S.sel[k]) sel[k]=S.sel[k]; });
+  set({cModel:m, sel:sel, priceOv:{}, pkgOv:{}, chosenPkg:null, filter:'ALL'});
+}
+function toggleItem(id){
+  const cur=S.sel[id], next=Object.assign({},S.sel);
+  if(cur&&cur.on) next[id]=Object.assign({},cur,{on:false});
+  else next[id]={on:true,tiers:(cur&&cur.tiers)||Object.assign({},ALL_TIERS)};
+  set({sel:next});
+}
+function toggleTier(ev,id,k){
+  ev.stopPropagation();
+  const cur=S.sel[id]; if(!cur||!cur.on) return;
+  const tiers=Object.assign({},tiersOf(id)); tiers[k]=!tiers[k];
+  set({sel:Object.assign({},S.sel,{[id]:Object.assign({},cur,{tiers:tiers})})});
+}
+function setPrice(id,v){ const o=Object.assign({},S.priceOv); o[id]=v.replace(/[^0-9.]/g,''); set({priceOv:o}); }
+function setCustom(k,fld,v){
+  const c=Object.assign({},S.custom);
+  c[k]=Object.assign({},c[k]||{name:'',price:''});
+  c[k][fld] = fld==='price' ? v.replace(/[^0-9.]/g,'') : v;
+  set({custom:c});
+}
+function setField(k,v){ set({[k]:v}); }
+function pickPkg(k){ set({chosenPkg:S.chosenPkg===k?null:k}); }
+function setPkgPrice(ev,k,v){
+  ev.stopPropagation();
+  const list=pkgData().find(function(p){return p.k===k;}).listTotal;
+  const clean=v.replace(/[^0-9.]/g,'');
+  const o=Object.assign({},S.pkgOv);
+  o[k] = (clean===''||parseFloat(clean)===list) ? null : clean;
+  set({pkgOv:o});
+}
+function toggleSettings(){ set({showSettings:!S.showSettings}); }
+function stepTax(d){
+  let v = Math.round((S.taxRate+d)*2)/2;
+  if(v<0) v=0; if(v>15) v=15;
+  set({taxRate:v});
+}
+function setTax(v){ set({taxRate:Math.min(15,Math.max(0,num(v,S.taxRate)))}); }
+function setTerm(t){ set({term:t}); }
+function setApr(v){ set({apr:Math.min(30,Math.max(0,num(v,S.apr)))}); }
+function toggleCash(){ set({cash:!S.cash}); }
+function doPrint(){ window.print(); }
+function resetAll(){
+  if(!confirm('Clear this deal and start a new menu?')) return;
+  const keep={taxRate:S.taxRate, term:S.term, apr:S.apr};
+  S = Object.assign(defaults(), keep); save(); render(); window.scrollTo(0,0);
 }
 
-function updateTotals() {
-  const term = parseInt(document.getElementById('term-select').value);
-  const rate = parseFloat(document.getElementById('rate-input').value) || 0;
-  let subtotal = 0, names = [];
-  selected.forEach(id => {
-    if (id === 'other') {
-      const val = parseFloat(document.getElementById('price-other')?.value) || 0;
-      const nm = document.getElementById('other-name-input')?.value.trim() || 'Other';
-      subtotal += val; names.push(nm);
-    } else {
-      const p = currentProducts.find(x => x.id === id);
-      if (p) { subtotal += parseFloat(document.getElementById('price-' + id)?.value) || 0; names.push(p.name); }
-    }
+/* ============================ DERIVED ============================ */
+function pkgData(){
+  const sel = selectedItems();
+  return TIERS.map(function(t){
+    const k=t[0], label=t[1];
+    const items = sel.filter(function(p){ return !!tiersOf(p.id)[k]; });
+    const listTotal = items.reduce(function(a,p){return a+p.price;},0);
+    const hasOv = S.pkgOv[k]!=null && S.pkgOv[k]!=='';
+    const effTotal = hasOv ? (parseFloat(S.pkgOv[k])||0) : listTotal;
+    return {k:k,label:label,items:items,listTotal:listTotal,effTotal:effTotal,
+      discounted: hasOv && effTotal<listTotal, priceStr: hasOv?String(S.pkgOv[k]):String(listTotal)};
   });
-  const tax = subtotal * TAX, total = subtotal + tax;
-  const monthly = (!isCash && selected.size > 0) ? calcMonthly(total, term, rate) : 0;
-  document.getElementById('item-count').textContent = selected.size;
-  document.getElementById('item-total-sub').textContent = 'of ' + currentProducts.length + ' products';
-  document.getElementById('total-price').textContent = '$' + Math.round(subtotal).toLocaleString('en-US');
-  document.getElementById('subtotal-line').textContent = fmt(subtotal);
-  document.getElementById('tax-line').textContent = fmt(tax);
-  document.getElementById('total-with-tax').textContent = fmt(total);
-  document.getElementById('term-display').textContent = 'over ' + term + ' months';
-  document.getElementById('selected-list').textContent = names.length ? names.join(' · ') : 'No items selected';
-  const mc = document.getElementById('monthly-card');
-  if (isCash) { mc.style.opacity = '0.35'; document.getElementById('monthly-bump').textContent = 'N/A'; }
-  else { mc.style.opacity = '1'; document.getElementById('monthly-bump').textContent = selected.size > 0 ? '+' + fmt(monthly).replace('.00', '') + '/mo' : '$0/mo'; }
-  if (currentModel) renderBundles();
+}
+function summaryData(){
+  const pk = S.chosenPkg ? pkgData().find(function(p){return p.k===S.chosenPkg;}) : null;
+  const items = pk ? pk.items : selectedItems();
+  const itemsSum = items.reduce(function(a,p){return a+p.price;},0);
+  const eff = pk ? pk.effTotal : itemsSum;
+  const disc = Math.max(0, itemsSum-eff);
+  const tax = eff*S.taxRate/100;
+  return {pk:pk,items:items,itemsSum:itemsSum,eff:eff,disc:disc,tax:tax,total:eff+tax};
 }
 
-function renderBundles() {
-  const container = document.getElementById('bundle-container');
-  const totals = document.getElementById('bundle-totals');
-  if (!container || !totals) return;
-  container.innerHTML = '';
-  totals.innerHTML = '';
+/* ============================ VIEWS ============================ */
+function header(){
+  const sel = selectedItems();
+  const sub = sel.reduce(function(a,p){return a+p.price;},0);
+  return '<div class="top"><div class="wrap"><div class="hdr">'+
+    '<div class="brand">'+logo('logo')+'<div><div class="brand-name">'+esc(STORE)+'</div>'+
+      '<div class="brand-sub">Genuine Mazda Accessories Menu</div></div></div>'+
+    '<div class="hdr-right">'+
+      '<div><div class="total-big">'+fmt0(sub)+'</div>'+
+      '<div class="total-cap">SELECTED · '+sel.length+' '+(sel.length===1?'ITEM':'ITEMS')+'</div></div>'+
+      '<button class="btn-ghost" onclick="toggleSettings()">FINANCE</button>'+
+      '<button class="btn-ghost" onclick="resetAll()">NEW DEAL</button>'+
+    '</div>'+
+  '</div></div></div>';
+}
+function nav(){
+  const labels=['DEAL','PRODUCTS','PACKAGES','SUMMARY'];
+  const line=[vehicle(), S.cName||''].filter(Boolean).join(' · ');
+  return '<div class="nav"><div class="wrap"><div class="nav-in"><div class="steps">'+
+    labels.map(function(l,i){
+      return '<button class="step'+(i===S.step?' on':'')+'" onclick="go('+i+')">'+l+'</button>';
+    }).join('')+
+    '</div><div class="veh-line">'+esc(line)+'</div></div></div></div>';
+}
 
-  const term = parseInt(document.getElementById('term-select').value);
-  const rate = parseFloat(document.getElementById('rate-input').value) || 0;
-
-  const dropOntoBundle = (bundleIdx, e) => {
-    const itemId = e.dataTransfer.getData('itemId');
-    if (!itemId) return;
-    if (!bundles[bundleIdx].includes(itemId)) bundles[bundleIdx].push(itemId);
-    saveBundlesForModel();
-    updateTotals();
+function viewDeal(){
+  let opts='<option value="">Select model…</option>';
+  Object.keys(vehicleAccessories).forEach(function(m){
+    opts+='<option value="'+esc(m)+'"'+(S.cModel===m?' selected':'')+'>'+esc(m)+'</option>';
+  });
+  const f=function(cap,key,ph){
+    return '<div class="field"><div class="cap">'+cap+'</div>'+
+      '<input value="'+esc(S[key])+'" placeholder="'+esc(ph||'')+'" onchange="setField(\''+key+'\',this.value)"></div>';
   };
-
-  [0, 1, 2].forEach(bundleIdx => {
-    const meta = bundleMeta[bundleIdx];
-    const col = document.createElement('div');
-    col.className = 'bundle-column' + (meta.recommended ? ' recommended' : '');
-    col.id = 'bundle-' + bundleIdx;
-    col.ondragover = (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; col.classList.add('drag-over'); };
-    col.ondragleave = () => col.classList.remove('drag-over');
-    col.ondrop = (e) => { e.preventDefault(); col.classList.remove('drag-over'); dropOntoBundle(bundleIdx, e); };
-
-    // Header
-    const header = document.createElement('div');
-    header.className = 'bundle-header';
-    const tierName = document.createElement('div');
-    tierName.className = 'bundle-tier-name';
-    tierName.textContent = bundleNames[bundleIdx];
-    tierName.title = 'Click to rename';
-    tierName.onclick = (e) => {
-      e.stopPropagation();
-      const input = document.createElement('input');
-      input.className = 'bundle-tier-input';
-      input.type = 'text';
-      input.value = bundleNames[bundleIdx];
-      tierName.replaceWith(input);
-      input.focus(); input.select();
-      let done = false;
-      const save = () => {
-        if (done) return; done = true;
-        bundleNames[bundleIdx] = input.value || bundleNames[bundleIdx];
-        saveBundlesForModel();
-        input.replaceWith(tierName);
-        tierName.textContent = bundleNames[bundleIdx];
-        updateTotals();
-      };
-      input.onblur = save;
-      input.onkeypress = (ev) => { if (ev.key === 'Enter') save(); };
-    };
-    const clearBtn = document.createElement('button');
-    clearBtn.className = 'bundle-clear-btn';
-    clearBtn.textContent = 'Clear';
-    clearBtn.onclick = (e) => {
-      e.stopPropagation();
-      bundles[bundleIdx] = [];
-      bundleMeta[bundleIdx].overridePrice = '';
-      bundleMeta[bundleIdx].tagline = '';
-      saveBundlesForModel();
-      updateTotals();
-    };
-    header.appendChild(tierName);
-    header.appendChild(clearBtn);
-    col.appendChild(header);
-
-    // Tagline
-    const tagline = document.createElement('input');
-    tagline.type = 'text';
-    tagline.className = 'bundle-tagline-input';
-    tagline.value = meta.tagline || '';
-    tagline.placeholder = 'Add a tagline…';
-    tagline.oninput = () => { bundleMeta[bundleIdx].tagline = tagline.value; saveBundlesForModel(); };
-    col.appendChild(tagline);
-
-    // Items
-    const items = document.createElement('div');
-    items.className = 'bundle-items';
-    bundles[bundleIdx].forEach(itemId => {
-      const item = document.createElement('div');
-      item.className = 'bundle-item';
-      item.draggable = true;
-      const name = document.createElement('div');
-      name.className = 'bundle-item-name';
-      name.textContent = getProductName(itemId) || '(unknown item)';
-      const price = document.createElement('div');
-      price.className = 'bundle-item-price';
-      price.textContent = fmt(getProductPrice(itemId));
-      const removeBtn = document.createElement('button');
-      removeBtn.type = 'button';
-      removeBtn.className = 'bundle-item-remove';
-      removeBtn.innerHTML = '&times;';
-      removeBtn.title = 'Remove from package';
-      removeBtn.onclick = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        bundles[bundleIdx] = bundles[bundleIdx].filter(id => id !== itemId);
-        saveBundlesForModel();
-        updateTotals();
-      };
-      removeBtn.onmousedown = (e) => e.stopPropagation();
-      item.appendChild(name);
-      item.appendChild(price);
-      item.appendChild(removeBtn);
-      item.ondragstart = (e) => {
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('itemId', itemId);
-        e.dataTransfer.setData('sourceBundleIdx', bundleIdx);
-        item.classList.add('dragging');
-      };
-      item.ondragend = () => item.classList.remove('dragging');
-      items.appendChild(item);
-    });
-    if (bundles[bundleIdx].length === 0) {
-      const zone = document.createElement('div');
-      zone.className = 'bundle-drop-zone';
-      zone.textContent = 'Tap a tier chip or drag here';
-      zone.ondragover = (e) => { e.preventDefault(); zone.classList.add('drag-active'); };
-      zone.ondragleave = () => zone.classList.remove('drag-active');
-      zone.ondrop = (e) => { e.preventDefault(); e.stopPropagation(); zone.classList.remove('drag-active'); dropOntoBundle(bundleIdx, e); };
-      items.appendChild(zone);
-    }
-    col.appendChild(items);
-
-    // Controls
-    const subtotal = calcBundleSubtotal(bundleIdx);
-    const finalPrice = calcBundlePrice(bundleIdx);
-    const savings = subtotal - finalPrice;
-
-    const controls = document.createElement('div');
-    controls.className = 'bundle-controls-row';
-    const priceLabel = document.createElement('label');
-    priceLabel.className = 'bundle-discount-wrap';
-    priceLabel.appendChild(document.createTextNode('Pkg $'));
-    const priceInput = document.createElement('input');
-    priceInput.type = 'number';
-    priceInput.className = 'bundle-discount-input';
-    priceInput.dataset.bundleIdx = bundleIdx;
-    priceInput.min = '0';
-    priceInput.step = '1';
-    priceInput.value = meta.overridePrice;
-    priceInput.placeholder = subtotal > 0 ? Math.round(subtotal).toString() : '0';
-    priceInput.title = 'Override package price (leave blank for items subtotal)';
-    priceInput.oninput = () => {
-      bundleMeta[bundleIdx].overridePrice = priceInput.value;
-      saveBundlesForModel();
-      updateTotals();
-      // re-render replaces this input — hand focus to its replacement so typing isn't interrupted
-      const next = document.querySelector('.bundle-discount-input[data-bundle-idx="' + bundleIdx + '"]');
-      if (next) next.focus();
-    };
-    priceLabel.appendChild(priceInput);
-    controls.appendChild(priceLabel);
-
-    const recBtn = document.createElement('button');
-    recBtn.type = 'button';
-    recBtn.className = 'bundle-recommend-toggle' + (meta.recommended ? ' active' : '');
-    recBtn.textContent = meta.recommended ? '★ Popular' : '☆ Mark';
-    recBtn.title = 'Highlight as the recommended tier';
-    recBtn.onclick = (e) => {
-      e.stopPropagation();
-      const was = meta.recommended;
-      [0, 1, 2].forEach(i => { bundleMeta[i].recommended = false; });
-      if (!was) bundleMeta[bundleIdx].recommended = true;
-      saveBundlesForModel();
-      updateTotals();
-    };
-    controls.appendChild(recBtn);
-    col.appendChild(controls);
-
-    // Summary
-    const summary = document.createElement('div');
-    summary.className = 'bundle-summary';
-    if (bundles[bundleIdx].length === 0) {
-      summary.innerHTML = '<div class="bundle-empty-note">Add items to see pricing</div>';
-    } else {
-      const sub = document.createElement('div');
-      sub.className = 'bundle-sum-row';
-      sub.innerHTML = '<span>Items subtotal</span><span>' + fmt(subtotal) + '</span>';
-      summary.appendChild(sub);
-      if (savings > 0.005) {
-        const sav = document.createElement('div');
-        sav.className = 'bundle-sum-row discount';
-        sav.innerHTML = '<span>Package savings</span><span>− ' + fmt(savings) + '</span>';
-        summary.appendChild(sav);
-      }
-      const t = document.createElement('div');
-      t.className = 'bundle-sum-row total';
-      t.innerHTML = '<span>Package price</span><span>' + fmt(finalPrice) + '</span>';
-      summary.appendChild(t);
-      if (finalPrice > 0 && !isCash) {
-        const m = calcMonthly(finalPrice * (1 + TAX), term, rate);
-        const monthly = document.createElement('div');
-        monthly.className = 'bundle-monthly';
-        monthly.innerHTML = '+' + fmt(m).replace('.00', '') + '/mo<small>' + term + ' mo · ' + rate.toFixed(1) + '% · incl. tax</small>';
-        summary.appendChild(monthly);
-      }
-    }
-    col.appendChild(summary);
-
-    container.appendChild(col);
-  });
-
-  // Bottom totals strip
-  [0, 1, 2].forEach(bundleIdx => {
-    const card = document.createElement('div');
-    card.className = 'bundle-total-card' + (bundleMeta[bundleIdx].recommended ? ' recommended' : '');
-    const label = document.createElement('div');
-    label.className = 'bundle-total-label';
-    label.textContent = bundleNames[bundleIdx];
-    const subtotal = calcBundleSubtotal(bundleIdx);
-    const finalPrice = calcBundlePrice(bundleIdx);
-    const savings = subtotal - finalPrice;
-    const price = document.createElement('div');
-    price.className = 'bundle-total-price';
-    price.textContent = fmt(finalPrice);
-    card.appendChild(label);
-    card.appendChild(price);
-    if (savings > 0.005) {
-      const s = document.createElement('div');
-      s.className = 'bundle-total-savings';
-      s.textContent = 'save ' + fmt(savings).replace('.00', '');
-      card.appendChild(s);
-    }
-    totals.appendChild(card);
-  });
-
-  renderProductPills();
+  return '<div class="wrap pane">'+
+    '<h2 class="title">Deal Information</h2>'+
+    '<div class="sub">Who we’re building this menu for.</div>'+
+    '<div class="box" style="margin-top:30px;max-width:980px"><div class="deal-grid">'+
+      f('CUSTOMER NAME','cName','Full name')+
+      '<div class="field"><div class="cap">VEHICLE MODEL</div>'+
+        '<select onchange="setModel(this.value)">'+opts+'</select></div>'+
+      f('STOCK #','cStock','—')+
+      f('VIN (LAST 8)','cVin','—')+
+      f('DATE','cDate','')+
+    '</div></div>'+
+    '<div style="display:flex;justify-content:flex-end;margin-top:36px;max-width:980px">'+
+      '<button class="btn-red" onclick="go(1)">SELECT PRODUCTS &nbsp;›</button></div>'+
+  '</div>';
 }
 
-function renderProducts(model) {
-  const grid = document.getElementById('products-grid');
-  grid.innerHTML = '';
-  selected.clear();
-  currentProducts = vehicleAccessories[model] || [];
-  document.getElementById('product-count-badge').textContent = currentProducts.length > 0
-    ? currentProducts.length + ' accessories available for ' + model
-    : '';
-  document.getElementById('f-vehicle').value = model;
-  currentProducts.forEach(p => {
-    const row = document.createElement('div'); row.className = 'product-row';
-    row.draggable = true;
-    row.dataset.productId = p.id;
-    row.innerHTML = '<div class="check-box"><div class="check-mark">&#10003;</div></div>' +
-      '<div class="product-info"><div class="product-name">' + p.name + '</div><div class="product-desc">' + p.desc + '</div></div>' +
-      '<div class="product-pricing">' +
-        '<div class="price-input-wrap"><span class="price-symbol">$</span><input class="price-input" type="number" id="price-' + p.id + '" value="' + p.price + '" min="0" step="1"></div>' +
-        '<div class="price-note">+ 7.5% tax</div>' +
-        '<div class="tier-pills" data-product-id="' + p.id + '"></div>' +
-      '</div>';
-    row.ondragstart = (e) => {
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('itemId', p.id);
-      e.dataTransfer.setData('sourceBundleIdx', -1);
-      row.classList.add('dragging');
-    };
-    row.ondragend = () => row.classList.remove('dragging');
-    row.addEventListener('click', e => {
-      if (e.target.classList.contains('price-input') || e.target.classList.contains('tier-pill')) return;
-      selected.has(p.id) ? selected.delete(p.id) : selected.add(p.id);
-      row.classList.toggle('selected', selected.has(p.id));
-      updateTotals();
-    });
-    row.querySelector('.price-input').addEventListener('input', updateTotals);
-    grid.appendChild(row);
-  });
-  // Custom "Other" row
-  const other = document.createElement('div'); other.className = 'other-row';
-  other.draggable = true;
-  other.dataset.productId = 'other';
-  other.innerHTML = '<div class="check-box"><div class="check-mark">&#10003;</div></div>' +
-    '<div class="product-info"><input class="other-name-input" id="other-name-input" type="text" placeholder="Add custom product name..."><input class="other-desc-input" id="other-desc-input" type="text" placeholder="Short description (optional)"></div>' +
-    '<div class="product-pricing">' +
-      '<div class="price-input-wrap"><span class="price-symbol">$</span><input class="price-input" type="number" id="price-other" value="0" min="0" step="1"></div>' +
-      '<div class="price-note">+ 7.5% tax</div>' +
-      '<div class="tier-pills" data-product-id="other"></div>' +
+function tierChips(id){
+  if(!(S.sel[id]&&S.sel[id].on)) return '';
+  const t=tiersOf(id);
+  return '<div class="chips">'+TIERS.map(function(x){
+    return '<button class="chip'+(t[x[0]]?' on':'')+'" onclick="toggleTier(event,\''+id+'\',\''+x[0]+'\')">'+x[1]+'</button>';
+  }).join('')+'</div>';
+}
+function viewProducts(){
+  if(!S.cModel){
+    return '<div class="wrap pane"><h2 class="title">Protection &amp; Accessories</h2>'+
+      '<div class="empty">Choose a vehicle model on the Deal step to see its accessories.</div>'+
+      '<div class="row-end"><button class="btn-back" onclick="go(0)">‹ &nbsp;DEAL INFO</button><div></div></div></div>';
+  }
+  const list = products();
+  const shown = list.filter(function(p){ return S.filter==='ALL'||p.cat===S.filter; });
+  const cards = shown.map(function(p){
+    const on = !!(S.sel[p.id]&&S.sel[p.id].on);
+    const pv = S.priceOv[p.id]!=null?S.priceOv[p.id]:p.price;
+    return '<div class="card'+(on?' sel':'')+'" onclick="toggleItem(\''+p.id+'\')">'+
+      '<div class="chk'+(on?' on':'')+'">'+(on?'✓':'')+'</div>'+
+      '<div class="cattag">'+CAT_LABEL[p.cat]+'</div>'+
+      '<div class="pname">'+esc(p.name)+'</div>'+
+      '<div class="pdesc">'+esc(p.desc)+'</div>'+
+      '<div class="pricerow"><div class="dollar">$</div>'+
+        '<input class="pinput" inputmode="decimal" value="'+esc(pv)+'" onclick="event.stopPropagation()" '+
+        'onchange="setPrice(\''+p.id+'\',this.value)"></div>'+
+      '<div class="warr">'+WARRANTY+'</div>'+
+      tierChips(p.id)+
     '</div>';
-  other.ondragstart = (e) => {
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('itemId', 'other');
-    e.dataTransfer.setData('sourceBundleIdx', -1);
-    other.classList.add('dragging');
-  };
-  other.ondragend = () => other.classList.remove('dragging');
-  other.addEventListener('click', e => {
-    if (['price-input', 'other-name-input', 'other-desc-input', 'tier-pill'].some(c => e.target.classList.contains(c))) return;
-    selected.has('other') ? selected.delete('other') : selected.add('other');
-    other.classList.toggle('selected', selected.has('other'));
-    updateTotals();
-  });
-  other.querySelector('#price-other').addEventListener('input', updateTotals);
-  other.querySelector('#other-name-input').addEventListener('input', updateTotals);
-  grid.appendChild(other);
-  updateTotals();
+  }).join('');
+
+  const rows = ['c1','c2'].map(function(k){
+    const on=!!(S.sel[k]&&S.sel[k].on), r=S.custom[k]||{name:'',price:''};
+    return '<div class="crow">'+
+      '<div class="cbox'+(on?' on':'')+'" onclick="toggleItem(\''+k+'\')">'+(on?'✓':'')+'</div>'+
+      '<input class="cname" value="'+esc(r.name)+'" placeholder="Describe item — e.g. window tint, paint protection, detail package…" '+
+        'onchange="setCustom(\''+k+'\',\'name\',this.value)">'+
+      '<div style="display:flex;align-items:baseline;gap:4px"><div class="dollar">$</div>'+
+        '<input class="cprice" inputmode="decimal" placeholder="0" value="'+esc(r.price)+'" '+
+        'onchange="setCustom(\''+k+'\',\'price\',this.value)"></div>'+
+      tierChips(k)+
+    '</div>';
+  }).join('');
+
+  const sel=selectedItems();
+  const sub=sel.reduce(function(a,p){return a+p.price;},0);
+  const filters=CATS.map(function(f){
+    return '<button class="filt'+(S.filter===f[0]?' on':'')+'" onclick="setFilter(\''+f[0]+'\')">'+f[1]+'</button>';
+  }).join('');
+
+  return '<div class="wrap pane">'+
+    '<div class="head-row">'+
+      '<div><h2 class="title">Protection &amp; Accessories</h2>'+
+      '<div class="sub" style="max-width:520px">'+list.length+' genuine accessories for your '+esc(vehicle())+
+      '. Select individually, or build packages on the next step.</div></div>'+
+      '<div class="filters">'+filters+'</div>'+
+    '</div>'+
+    '<div class="grid">'+cards+'</div>'+
+    '<div class="custom-hd"><div class="cap" style="color:var(--ink)">CUSTOM ITEMS</div>'+
+      '<div class="hint">PRICES ON ANY CARD CAN BE TAPPED &amp; ADJUSTED</div></div>'+
+    rows+
+    '<div class="row-end">'+
+      '<button class="btn-back" onclick="go(0)">‹ &nbsp;DEAL INFO</button>'+
+      '<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">'+
+        '<div style="font-size:13px;color:var(--ink2)">'+
+        (sel.length? sel.length+(sel.length===1?' item · ':' items · ')+fmt0(sub) : 'No items selected')+'</div>'+
+        '<button class="btn-red" onclick="go(2)">BUILD PACKAGES &nbsp;›</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
 }
 
-vehicleSelect.addEventListener('change', function() {
-  if (this.value) {
-    loadBundlesForModel(this.value);
-    document.getElementById('bundle-builder').hidden = false;
-    renderProducts(this.value);
+function viewPackages(){
+  const pkgs=pkgData();
+  const anySel = selectedItems().length>0;
+  let body;
+  if(!anySel){
+    body='<div class="empty">No items selected yet — go back to Products to add items.</div>';
   } else {
-    currentModel = '';
-    bundles[0] = []; bundles[1] = []; bundles[2] = [];
-    Object.assign(bundleNames, defaultBundleNames);
-    bundleMeta = defaultBundleMeta();
-    document.getElementById('bundle-builder').hidden = true;
-    document.getElementById('products-grid').innerHTML = '';
-    document.getElementById('product-count-badge').textContent = '';
-    selected.clear();
-    currentProducts = [];
-    updateTotals();
+    body='<div class="pkgs">'+pkgs.map(function(p){
+      const chosen=S.chosenPkg===p.k, pop=p.k===POPULAR;
+      const withTax=p.effTotal*(1+S.taxRate/100);
+      return '<div class="pkg'+(pop?' pop':'')+(chosen?' on':'')+'" onclick="pickPkg(\''+p.k+'\')">'+
+        '<div class="pkg-hd"><div class="pkg-name">'+p.label+'</div>'+
+          (pop?'<div class="pkg-badge">MOST POPULAR</div>':'')+'</div>'+
+        '<div class="pkg-price"><div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">'+
+          '<div style="display:flex;align-items:baseline;gap:3px"><div class="dollar" style="font-size:16px">$</div>'+
+          '<input class="pkg-inp" inputmode="decimal" value="'+esc(p.priceStr)+'" title="Tap to set a package price" onclick="event.stopPropagation()" '+
+          'onchange="setPkgPrice(event,\''+p.k+'\',this.value)"></div>'+
+          (p.discounted?'<div class="strike">'+fmt0(p.listTotal)+'</div>':'')+
+          (p.discounted?'<div class="save">SAVE '+fmt0(p.listTotal-p.effTotal)+'</div>':'')+
+        '</div>'+
+        '<div class="permo">'+(showMonthly()&&p.effTotal>0?'+'+fmt0(monthly(withTax))+' / mo':'')+'</div></div>'+
+        '<div class="pkg-pick'+(chosen?' on':'')+'">'+(chosen?'✓ SELECTED FOR SUMMARY':'TAP TO SELECT')+'</div>'+
+        '<div class="pkg-rule"></div>'+
+        '<div class="pkg-body">'+(p.items.length?p.items.map(function(it){
+          return '<div class="pkg-row"><div class="nm">'+esc(it.name)+'</div><div class="leader"></div>'+
+            '<div class="pr">'+fmt0(it.price)+'</div></div>';
+        }).join(''):'<div class="pkg-none">No items in this package yet.</div>')+'</div>'+
+      '</div>';
+    }).join('')+'</div>'+
+    '<div class="note">Tap a package to select it — the Summary and printed menu will show that package’s products and price. Tap a package price to set a discounted price. The Essential / Premium / Deluxe toggles on the Products page control what’s in each.</div>';
   }
-});
-
-function clearAll() {
-  selected.clear();
-  document.querySelectorAll('.product-row,.other-row').forEach(r => r.classList.remove('selected'));
-  const ni = document.getElementById('other-name-input'), di = document.getElementById('other-desc-input');
-  if (ni) ni.value = ''; if (di) di.value = '';
-  clearSig('sig-customer', 'ph-customer'); clearSig('sig-associate', 'ph-associate');
-  if (currentModel) {
-    bundles[0] = []; bundles[1] = []; bundles[2] = [];
-    bundleMeta = defaultBundleMeta();
-    saveBundlesForModel();
-  }
-  updateTotals();
+  return '<div class="wrap pane">'+
+    '<h2 class="title">Build Packages</h2>'+
+    '<div class="sub">Three ways to say yes — built automatically from your product selections.</div>'+
+    body+
+    '<div class="row-end">'+
+      '<button class="btn-back" onclick="go(1)">‹ &nbsp;PRODUCTS</button>'+
+      '<button class="btn-red" onclick="go(3)">REVIEW &amp; SIGN &nbsp;›</button>'+
+    '</div>'+
+  '</div>';
 }
 
-document.getElementById('cash-toggle').addEventListener('click', function() {
-  isCash = !isCash; this.classList.toggle('active', isCash);
-  document.getElementById('finance-controls').style.display = isCash ? 'none' : 'flex';
-  document.getElementById('cash-sub').textContent = isCash ? 'Cash deal — monthly payment hidden' : 'Toggle to hide monthly payment';
-  updateTotals();
-});
-
-const sigState = {};
-function initSigPad(canvasId, placeholderId) {
-  const canvas = document.getElementById(canvasId);
-  const ph = document.getElementById(placeholderId);
-  const container = canvas.parentElement;
-  let drawing = false;
-  sigState[canvasId] = { hasSig: false };
-  function resize() {
-    const dpr = window.devicePixelRatio || 1;
-    const w = container.clientWidth || 300;
-    canvas.width = w * dpr; canvas.height = 90 * dpr;
-    canvas.style.height = '90px';
-    const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
-    ctx.strokeStyle = '#1a1a18'; ctx.lineWidth = 1.8; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  }
-  function getPos(e) { const rect = canvas.getBoundingClientRect(); const src = e.touches ? e.touches[0] : e; return { x: src.clientX - rect.left, y: src.clientY - rect.top }; }
-  canvas.addEventListener('mousedown', e => { e.preventDefault(); drawing = true; const p = getPos(e); canvas.getContext('2d').beginPath(); canvas.getContext('2d').moveTo(p.x, p.y); });
-  canvas.addEventListener('mousemove', e => { if (!drawing) return; const ctx = canvas.getContext('2d'); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x, p.y); if (!sigState[canvasId].hasSig) { sigState[canvasId].hasSig = true; ph.style.display = 'none'; } });
-  canvas.addEventListener('mouseup', () => drawing = false);
-  canvas.addEventListener('mouseleave', () => drawing = false);
-  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); canvas.getContext('2d').beginPath(); canvas.getContext('2d').moveTo(p.x, p.y); }, { passive: false });
-  canvas.addEventListener('touchmove', e => { if (!drawing) return; e.preventDefault(); const ctx = canvas.getContext('2d'); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x, p.y); if (!sigState[canvasId].hasSig) { sigState[canvasId].hasSig = true; ph.style.display = 'none'; } }, { passive: false });
-  canvas.addEventListener('touchend', () => drawing = false);
-  window.addEventListener('resize', () => { if (!sigState[canvasId].hasSig) resize(); });
-  resize();
+function metaHtml(){
+  return [['CUSTOMER',S.cName||'—'],['VEHICLE',vehicle()||'—'],['STOCK',S.cStock||'—'],
+    ['VIN (LAST 8)',S.cVin||'—'],['DATE',S.cDate||'—']].map(function(m){
+    return '<div><div class="k">'+m[0]+'</div><div class="v">'+esc(m[1])+'</div></div>';
+  }).join('');
 }
-function clearSig(canvasId, placeholderId) {
-  const canvas = document.getElementById(canvasId);
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-  document.getElementById(placeholderId).style.display = 'block';
-  if (sigState[canvasId]) sigState[canvasId].hasSig = false;
+function viewSummary(){
+  const d=summaryData();
+  const lines = d.items.length ? d.items.map(function(it){
+    return '<div class="sline"><div class="nm">'+esc(it.name)+'</div><div class="leader"></div>'+
+      '<div class="pr">'+fmt0(it.price)+'</div></div>';
+  }).join('') : '<div class="empty" style="margin-top:24px">No items selected — go to Products to add items.</div>';
+
+  return '<div class="wrap pane">'+
+    '<div class="head-row">'+
+      '<div><h2 class="title">Review &amp; Sign</h2><div class="sub" style="max-width:640px">'+
+        (d.pk ? TIER_NAMES[d.pk.k]+' Package selected — confirm below, then print for signatures.'
+              : 'Confirm the selections below, then print for signatures. Tip: tap a package on the Packages page to summarize that package instead.')+
+      '</div></div>'+
+      '<button class="btn-red" onclick="doPrint()">PRINT MENU &nbsp;⎙</button>'+
+    '</div>'+
+    '<div class="sum-grid">'+
+      '<div><div class="meta">'+metaHtml()+'</div>'+lines+'</div>'+
+      '<div><div class="tot-box">'+
+        '<div class="tot-row"><div>Subtotal</div><div>'+fmt2(d.itemsSum)+'</div></div>'+
+        (d.disc>0?'<div class="tot-row disc"><div>Package Discount</div><div>−'+fmt2(d.disc)+'</div></div>':'')+
+        '<div class="tot-row"><div>Sales Tax ('+S.taxRate.toFixed(1)+'%)</div><div>'+fmt2(d.tax)+'</div></div>'+
+        '<div class="tot-final"><div class="k">TOTAL</div><div class="v">'+fmt2(d.total)+'</div></div>'+
+        (showMonthly()?'<div class="tot-mo"><div>Monthly Payment Est. ('+S.term+' mo)</div><div><b>'+
+          fmt0(monthly(d.total))+'</b> / mo</div></div>':'<div style="height:10px"></div>')+
+      '</div>'+
+      '<div class="fineprint">All prices pre-tax; tax reflected in total. Monthly estimates are illustrative, based on Finance settings. Genuine Mazda Accessories are backed by Mazda’s warranty. Signatures are collected on the printed menu.</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="row-end"><button class="btn-back" onclick="go(2)">‹ &nbsp;PACKAGES</button><div></div></div>'+
+  '</div>';
 }
 
-document.getElementById('f-date').valueAsDate = new Date();
-document.getElementById('term-select').addEventListener('change', updateTotals);
-document.getElementById('rate-input').addEventListener('input', updateTotals);
-updateTotals();
-window.addEventListener('load', () => { initSigPad('sig-customer', 'ph-customer'); initSigPad('sig-associate', 'ph-associate'); });
+function viewDrawer(){
+  if(!S.showSettings) return '';
+  const chips=[24,36,48,60,72,84].map(function(t){
+    return '<button class="termchip'+(t===S.term?' on':'')+'" onclick="setTerm('+t+')">'+t+' MO</button>';
+  }).join('');
+  return '<div class="scrim" onclick="toggleSettings()"></div>'+
+  '<div class="drawer">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center">'+
+      '<h3>Finance Settings</h3><button class="x" onclick="toggleSettings()">×</button></div>'+
+    '<div style="margin-top:32px;display:flex;flex-direction:column;gap:28px">'+
+      '<div class="field"><div class="cap">SALES TAX RATE (%)</div>'+
+        '<div class="stepper">'+
+          '<button class="sbtn" onclick="stepTax(-0.5)">−</button>'+
+          '<input class="taxinp" inputmode="decimal" value="'+S.taxRate.toFixed(1)+'" onchange="setTax(this.value)">'+
+          '<button class="sbtn" onclick="stepTax(0.5)">+</button>'+
+        '</div>'+
+        '<div style="font-size:10.5px;color:var(--muted);letter-spacing:.04em">Steps by 0.5% — Marion 7.5, Alachua 7.0, Lake 7.0, Citrus 6.5</div>'+
+      '</div>'+
+      '<div class="field"><div class="cap">FINANCE TERM</div>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:6px">'+chips+'</div></div>'+
+      '<div class="field"><div class="cap">INTEREST RATE (% APR)</div>'+
+        '<input value="'+S.apr+'" inputmode="decimal" onchange="setApr(this.value)"></div>'+
+      '<div class="cashrow" onclick="toggleCash()">'+
+        '<div class="cashbox'+(S.cash?' on':'')+'">'+(S.cash?'✓':'')+'</div>'+
+        '<div style="font-size:13px;color:var(--ink2)">Cash deal — hide monthly estimate</div></div>'+
+    '</div>'+
+  '</div>';
+}
+
+function viewPrint(){
+  const d=summaryData();
+  return ''+
+  '<div class="p-bar"><div class="p-brand">'+logo('p-logo')+'<div class="p-name">'+esc(STORE)+'</div></div>'+
+    '<div class="p-tag">ACCESSORY MENU</div></div>'+
+  '<div class="p-meta meta" style="border:none;padding-bottom:0">'+metaHtml()+'</div>'+
+  '<div style="padding:22px 0 0">'+
+    '<div class="p-sec">'+(d.pk?'SELECTED PRODUCTS · '+TIER_NAMES[d.pk.k].toUpperCase()+' PACKAGE':'SELECTED PRODUCTS')+'</div>'+
+    (d.items.length?d.items.map(function(it){
+      return '<div class="p-line"><div style="font-size:13px;font-weight:500">'+esc(it.name)+'</div>'+
+        '<div class="p-leader"></div><div style="font-size:13px;font-variant-numeric:tabular-nums">'+fmt0(it.price)+'</div></div>';
+    }).join(''):'<div class="p-line" style="color:#767676;font-size:12px">No products selected.</div>')+
+  '</div>'+
+  '<div style="display:flex;justify-content:flex-end;padding:18px 0 0;page-break-inside:avoid"><div style="width:320px">'+
+    '<div class="p-tot"><div>Subtotal</div><div>'+fmt2(d.itemsSum)+'</div></div>'+
+    (d.disc>0?'<div class="p-tot" style="color:#1b8562"><div>Package Discount</div><div>−'+fmt2(d.disc)+'</div></div>':'')+
+    '<div class="p-tot"><div>Sales Tax ('+S.taxRate.toFixed(1)+'%)</div><div>'+fmt2(d.tax)+'</div></div>'+
+    '<div class="p-total"><div style="font-size:10px;font-weight:600;letter-spacing:.22em">TOTAL</div>'+
+      '<div style="font-size:24px;font-weight:600;font-variant-numeric:tabular-nums">'+fmt2(d.total)+'</div></div>'+
+    (showMonthly()?'<div class="p-tot" style="color:#555;font-size:11px;margin-top:6px"><div>Monthly Payment Est. ('+S.term+' mo)</div><div>'+
+      fmt0(monthly(d.total))+' / mo</div></div>':'')+
+  '</div></div>'+
+  '<div class="p-ack" style="padding:26px 0 0">'+
+    '<div class="p-sec">CUSTOMER ACKNOWLEDGMENT</div>'+
+    '<div style="font-size:11px;line-height:1.7;color:#333;margin-top:12px">I have been presented with the above accessory and protection products by the dealership. The items selected have been agreed to at the prices listed. I understand all products are optional and my selections are reflected by my signature below.</div>'+
+    '<div class="p-sign">'+
+      '<div><div class="p-rule"></div><div class="p-cap">CUSTOMER SIGNATURE &nbsp;·&nbsp; DATE</div></div>'+
+      '<div><div class="p-rule"></div><div class="p-cap">SALES ASSOCIATE &nbsp;·&nbsp; DATE</div></div>'+
+    '</div>'+
+    '<div style="font-size:9.5px;line-height:1.7;color:#767676;margin-top:30px">All prices shown are pre-tax; sales tax is applied and reflected in the total above. Monthly payment estimates are illustrative only; final payment amounts will be reflected in your financing contract. Genuine Mazda Accessories are backed by Mazda’s warranty. Products and prices are subject to change without notice. '+esc(STORE)+'.</div>'+
+  '</div>';
+}
+
+/* ============================ RENDER ============================ */
+function render(){
+  const views=[viewDeal,viewProducts,viewPackages,viewSummary];
+  document.getElementById('app').innerHTML = header()+nav()+(views[S.step]||viewDeal)();
+  document.getElementById('drawer-host').innerHTML = viewDrawer();
+  document.getElementById('print-sheet').innerHTML = viewPrint();
+}
+render();
 </script>
 </body>
 </html>
